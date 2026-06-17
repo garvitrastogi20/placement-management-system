@@ -1,9 +1,5 @@
 const express = require("express");
-
 const router = express.Router();
-
-router.get("/test", (req, res) => {
-    res.send("Auth Route Working");
-});
-
+const { test } = require("../controllers/authController");
+router.get("/test", test);
 module.exports = router;
