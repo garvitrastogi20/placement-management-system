@@ -7,6 +7,9 @@ const protect = require("../middleware/authMiddleware");
 const {
     createJob,
     applyJob,
+    getApplicants,
+    getAllJobs,
+    getMyApplications,
 } = require("../controllers/jobController");
 
 router.post(
@@ -21,6 +24,25 @@ router.post(
     protect,
     authorizeRoles("student"),
     applyJob
+);
+router.get(
+    "/",
+    protect,
+    getAllJobs
+);
+
+router.get(
+    "/my-applications",
+    protect,
+    authorizeRoles("student"),
+    getMyApplications
+);
+
+router.get(
+    "/:jobId/applicants",
+    protect,
+    authorizeRoles("recruiter"),
+    getApplicants
 );
 
 module.exports = router;

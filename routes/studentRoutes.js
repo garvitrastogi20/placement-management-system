@@ -4,21 +4,34 @@ const router = express.Router();
 
 const protect = require("../middleware/authMiddleware");
 
+const authorizeRoles =
+    require("../middleware/roleMiddleware");
+
 const {
     createStudentProfile,
     getStudentProfile,
+    getStudentDashboard,
 } = require("../controllers/studentController");
-
-router.get(
-    "/profile",
-    protect,
-    getStudentProfile
-);
 
 router.post(
     "/profile",
     protect,
+    authorizeRoles("student"),
     createStudentProfile
+);
+
+router.get(
+    "/profile",
+    protect,
+    authorizeRoles("student"),
+    getStudentProfile
+);
+
+router.get(
+    "/dashboard",
+    protect,
+    authorizeRoles("student"),
+    getStudentDashboard
 );
 
 module.exports = router;
