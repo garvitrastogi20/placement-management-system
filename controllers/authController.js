@@ -14,7 +14,7 @@ const getProfile = async (req, res) => {
 
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
 
         if (!name || !email || !password) {
             return res.status(400).json({
@@ -35,6 +35,7 @@ const registerUser = async (req, res) => {
             name,
             email,
             password: hashedPassword,
+            role,
         });
 
         res.status(201).json({
@@ -81,6 +82,7 @@ const loginUser = async (req, res) => {
         const token = jwt.sign(
         {
             id: user._id,
+            role: user.role,
         },
         process.env.JWT_SECRET,
         {
