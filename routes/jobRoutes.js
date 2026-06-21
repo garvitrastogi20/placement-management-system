@@ -1,8 +1,9 @@
 const express = require("express");
-const authorizeRoles = require("../middleware/roleMiddleware");
 const router = express.Router();
 
 const protect = require("../middleware/authMiddleware");
+const authorizeRoles =
+    require("../middleware/roleMiddleware");
 
 const {
     createJob,
@@ -12,6 +13,7 @@ const {
     getMyApplications,
 } = require("../controllers/jobController");
 
+// Recruiter creates a job
 router.post(
     "/",
     protect,
@@ -19,18 +21,18 @@ router.post(
     createJob
 );
 
+// Student applies for a job
 router.post(
     "/:jobId/apply",
     protect,
     authorizeRoles("student"),
     applyJob
 );
-router.get(
-    "/",
-    protect,
-    getAllJobs
-);
 
+// Get all jobs
+router.get("/", getAllJobs);
+
+// Get student's applications
 router.get(
     "/my-applications",
     protect,
@@ -38,6 +40,7 @@ router.get(
     getMyApplications
 );
 
+// Recruiter views applicants for a job
 router.get(
     "/:jobId/applicants",
     protect,

@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const cors = require("cors");
 const express = require("express");
 const connectDB = require("./config/db");
 const jobRoutes = require("./routes/jobRoutes");
@@ -12,6 +13,8 @@ const recruiterRoutes =
 const applicationRoutes =
     require("./routes/applicationRoutes");
 connectDB();
+
+app.use(cors());
 
 app.use(express.json());
 
