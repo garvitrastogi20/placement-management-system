@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import api from "@/services/api";
 
 export default function LoginPage() {
+
     const router = useRouter();
 
     const [formData, setFormData] = useState({
@@ -12,17 +13,25 @@ export default function LoginPage() {
         password: "",
     });
 
+    const [loading, setLoading] = useState(false);
+
     const handleChange = (e) => {
+
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
         });
+
     };
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
 
+        setLoading(true);
+
         try {
+
             const res = await api.post(
                 "/auth/login",
                 formData
@@ -33,9 +42,34 @@ export default function LoginPage() {
                 res.data.token
             );
 
+            localStorage.setItem(
+                "role",
+                res.data.user.role
+            );
+
+            localStorage.setItem(
+                "name",
+                res.data.user.name
+            );
+
             alert("Login Successful");
 
-            router.push("/dashboard");
+            if (
+                res.data.user.role ===
+                "recruiter"
+            ) {
+
+                router.push(
+                    "/recruiter/dashboard"
+                );
+
+            } else {
+
+                router.push(
+                    "/dashboard"
+                );
+
+            }
 
         } catch (error) {
 
@@ -43,42 +77,64 @@ export default function LoginPage() {
                 error.response?.data?.message ||
                 "Login Failed"
             );
+
+        } finally {
+
+            setLoading(false);
+
         }
+
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen">
+
+        <div className="flex justify-center items-center min-h-screen bg-gray-950">
+
             <form
                 onSubmit={handleSubmit}
-                className="w-96 p-6 border rounded-lg shadow"
+                className="w-96 bg-gray-900 border border-gray-800 p-8 rounded-2xl shadow-xl"
             >
-                <h1 className="text-2xl font-bold mb-4">
+
+                <h1 className="text-3xl font-bold text-white mb-6 text-center">
+
                     Login
+
                 </h1>
 
                 <input
                     type="email"
                     name="email"
                     placeholder="Email"
-                    className="w-full border p-2 mb-3"
                     onChange={handleChange}
+                    className="w-full p-3 rounded-lg bg-gray-800 text-white mb-4"
+                    required
                 />
 
                 <input
                     type="password"
                     name="password"
                     placeholder="Password"
-                    className="w-full border p-2 mb-3"
                     onChange={handleChange}
+                    className="w-full p-3 rounded-lg bg-gray-800 text-white mb-6"
+                    required
                 />
 
                 <button
                     type="submit"
-                    className="bg-green-600 text-white px-4 py-2 w-full"
+                    disabled={loading}
+                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 p-3 rounded-lg text-white font-semibold transition"
                 >
-                    Login
+
+                    {loading
+                        ? "Logging in..."
+                        : "Login"}
+
                 </button>
+
             </form>
+
         </div>
+
     );
+
 }

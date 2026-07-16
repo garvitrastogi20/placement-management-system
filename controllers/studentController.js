@@ -50,10 +50,12 @@ const createStudentProfile = async (req, res) => {
 const getStudentProfile = async (req, res) => {
     try {
 
-        const student =
-            await Student.findOne({
-                user: req.user.id,
-            });
+        const student = await Student.findOne({
+            user: req.user.id,
+        }).populate(
+            "user",
+            "name email role"
+        );
 
         if (!student) {
             return res.status(404).json({
@@ -68,6 +70,7 @@ const getStudentProfile = async (req, res) => {
         res.status(500).json({
             message: error.message,
         });
+
     }
 };
 
@@ -75,49 +78,60 @@ const getStudentProfile = async (req, res) => {
 const getStudentDashboard = async (req, res) => {
     try {
 
-        const applications =
-            await Application.find({
-                student: req.user.id,
+        const student = await Student.findOne({
+            user: req.user.id,
+        }).populate("user", "name email");
+
+        if (!student) {
+            return res.status(404).json({
+                message: "Student profile not found",
             });
+        }
+
+        const applications = await Application.find({
+            student: req.user.id,
+        });
 
         const dashboard = {
-            totalApplications:
-                applications.length,
+            user: student.user,
 
-            applied:
-                applications.filter(
-                    app =>
-                        app.status === "Applied"
+            profile: {
+                college: student.college,
+                branch: student.branch,
+                cgpa: student.cgpa,
+                skills: student.skills,
+                resumeUrl: student.resumeUrl,
+            },
+
+            stats: {
+                totalApplications: applications.length,
+
+                shortlisted: applications.filter(
+                    app => app.status === "Shortlisted"
                 ).length,
 
-            shortlisted:
-                applications.filter(
-                    app =>
-                        app.status === "Shortlisted"
+                selected: applications.filter(
+                    app => app.status === "Selected"
                 ).length,
 
-            selected:
-                applications.filter(
-                    app =>
-                        app.status === "Selected"
+                rejected: applications.filter(
+                    app => app.status === "Rejected"
                 ).length,
 
-            rejected:
-                applications.filter(
-                    app =>
-                        app.status === "Rejected"
-                ).length,
+                resumeUploaded: !!student.resumeUrl,
+
+                totalSkills: student.skills.length,
+            },
         };
 
-        res.status(200).json(
-            dashboard
-        );
+        res.status(200).json(dashboard);
 
     } catch (error) {
 
         res.status(500).json({
             message: error.message,
         });
+
     }
 };
 

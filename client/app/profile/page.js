@@ -1,83 +1,267 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import ResumeUpload from "@/components/ResumeUpload";
 import api from "@/services/api";
 
 export default function ProfilePage() {
 
-    const [profile, setProfile] =
-        useState(null);
+    const router = useRouter();
+
+    const [loading, setLoading] = useState(true);
+
+    const [profile, setProfile] = useState(null);
+
+    const [formData, setFormData] = useState({
+        college: "",
+        branch: "",
+        cgpa: "",
+        skills: "",
+    });
 
     useEffect(() => {
 
-        const fetchProfile =
-            async () => {
+        const fetchProfile = async () => {
 
-                try {
+            try {
 
-                    const token =
-                        localStorage.getItem(
-                            "token"
-                        );
+                const token = localStorage.getItem("token");
 
-                    const res =
-                        await api.get(
-                            "/student/profile",
-                            {
-                                headers: {
-                                    Authorization:
-                                        `Bearer ${token}`,
-                                },
-                            }
-                        );
+                const res = await api.get(
+                    "/student/profile",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
 
-                    setProfile(
-                        res.data
-                    );
+                setProfile(res.data);
 
-                } catch (error) {
+            } catch (error) {
+
+                if (error.response?.status !== 404) {
 
                     console.log(error);
 
                 }
-            };
+
+            } finally {
+
+                setLoading(false);
+
+            }
+
+        };
 
         fetchProfile();
 
     }, []);
 
-    if (!profile) {
+    const handleChange = (e) => {
+
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+
+    };
+
+    const handleSubmit = async (e) => {
+
+        e.preventDefault();
+
+        try {
+
+            const token = localStorage.getItem("token");
+
+            await api.post(
+                "/student/profile",
+                {
+                    ...formData,
+                    skills: formData.skills
+                        .split(",")
+                        .map(skill => skill.trim())
+                        .filter(skill => skill),
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            alert("Profile created successfully!");
+
+            router.push("/dashboard");
+
+        } catch (error) {
+
+            alert(
+                error.response?.data?.message ||
+                "Failed to create profile"
+            );
+
+        }
+
+    };
+
+    if (loading) {
 
         return (
             <>
                 <Navbar />
 
-                <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
-                    Loading...
+                <div className="min-h-screen bg-gray-950 text-white flex justify-center items-center">
+                    <h1 className="text-3xl font-semibold">
+                        Loading...
+                    </h1>
                 </div>
             </>
         );
+
     }
 
+    // -------------------------------
+    // NEW STUDENT
+    // -------------------------------
+
+    if (!profile) {
+
+        return (
+
+            <>
+                <Navbar />
+
+                <div className="min-h-screen bg-gray-950 text-white flex justify-center items-center p-8">
+
+                    <form
+                        onSubmit={handleSubmit}
+                        className="bg-gray-900 border border-gray-800 rounded-3xl p-10 w-full max-w-2xl shadow-2xl"
+                    >
+
+                        <h1 className="text-4xl font-bold mb-2">
+                            Complete Your Profile
+                        </h1>
+
+                        <p className="text-gray-400 mb-8">
+                            Complete your profile before applying for jobs.
+                        </p>
+
+                        <div className="space-y-6">
+
+                            <div>
+
+                                <label className="block mb-2">
+                                    College
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="college"
+                                    value={formData.college}
+                                    onChange={handleChange}
+                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3"
+                                    required
+                                />
+
+                            </div>
+
+                            <div>
+
+                                <label className="block mb-2">
+                                    Branch
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="branch"
+                                    value={formData.branch}
+                                    onChange={handleChange}
+                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3"
+                                    required
+                                />
+
+                            </div>
+
+                            <div>
+
+                                <label className="block mb-2">
+                                    CGPA
+                                </label>
+
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    name="cgpa"
+                                    value={formData.cgpa}
+                                    onChange={handleChange}
+                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3"
+                                    required
+                                />
+
+                            </div>
+
+                            <div>
+
+                                <label className="block mb-2">
+                                    Skills
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="skills"
+                                    placeholder="React, Node.js, MongoDB"
+                                    value={formData.skills}
+                                    onChange={handleChange}
+                                    className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3"
+                                    required
+                                />
+
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="w-full bg-blue-600 hover:bg-blue-700 rounded-xl py-4 text-lg font-semibold transition"
+                            >
+                                Save Profile
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </>
+
+        );
+
+    }
+
+    // -------------------------------
+    // EXISTING STUDENT
+    // -------------------------------
+
     return (
+
         <>
             <Navbar />
 
             <div className="min-h-screen bg-gray-950 text-white p-8">
 
-                {/* Profile Card */}
-
-                <div className="max-w-4xl mx-auto bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-lg">
+                <div className="max-w-4xl mx-auto bg-gray-900 border border-gray-800 rounded-3xl p-10 shadow-xl">
 
                     <h1 className="text-4xl font-bold mb-8">
                         Student Profile
                     </h1>
 
-                    <div className="space-y-5">
+                    <div className="space-y-6">
 
                         <div>
+
                             <p className="text-gray-400">
                                 College
                             </p>
@@ -85,9 +269,11 @@ export default function ProfilePage() {
                             <p className="text-xl">
                                 {profile.college}
                             </p>
+
                         </div>
 
                         <div>
+
                             <p className="text-gray-400">
                                 Branch
                             </p>
@@ -95,16 +281,19 @@ export default function ProfilePage() {
                             <p className="text-xl">
                                 {profile.branch}
                             </p>
+
                         </div>
 
                         <div>
+
                             <p className="text-gray-400">
                                 CGPA
                             </p>
 
-                            <p className="text-xl">
+                            <p className="text-xl text-green-400">
                                 {profile.cgpa}
                             </p>
+
                         </div>
 
                         <div>
@@ -115,16 +304,16 @@ export default function ProfilePage() {
 
                             <div className="flex flex-wrap gap-3">
 
-                                {profile.skills?.map(
-                                    (skill, index) => (
-                                        <span
-                                            key={index}
-                                            className="bg-blue-900 text-blue-300 px-4 py-2 rounded-full"
-                                        >
-                                            {skill}
-                                        </span>
-                                    )
-                                )}
+                                {profile.skills?.map((skill, index) => (
+
+                                    <span
+                                        key={index}
+                                        className="bg-blue-600 px-4 py-2 rounded-full"
+                                    >
+                                        {skill}
+                                    </span>
+
+                                ))}
 
                             </div>
 
@@ -150,7 +339,7 @@ export default function ProfilePage() {
                             ) : (
 
                                 <p className="text-red-400">
-                                    No Resume Uploaded
+                                    Resume not uploaded
                                 </p>
 
                             )}
@@ -161,8 +350,6 @@ export default function ProfilePage() {
 
                 </div>
 
-                {/* Resume Upload Section */}
-
                 <div className="max-w-4xl mx-auto mt-8">
 
                     <ResumeUpload />
@@ -170,6 +357,9 @@ export default function ProfilePage() {
                 </div>
 
             </div>
+
         </>
+
     );
+
 }
