@@ -1,10 +1,8 @@
 "use client";
-
+import PageContainer from "@/components/layout/PageContainer";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import Navbar from "@/components/Navbar";
-import Background from "@/components/ui/Background";
 import Hero from "@/components/dashboard/Hero";
 import QuickStats from "@/components/dashboard/QuickStats";
 import api from "@/services/api";
@@ -71,28 +69,12 @@ export default function Dashboard() {
     }, [router]);
 
     if (loading) {
-
-        return (
-
-            <Background>
-
-                <Navbar />
-
-                <div className="min-h-screen flex items-center justify-center">
-
-                    <h1 className="text-2xl font-semibold text-white">
-
-                        Loading...
-
-                    </h1>
-
-                </div>
-
-            </Background>
-
-        );
-
-    }
+    return (
+        <div className="flex h-screen items-center justify-center text-white text-xl">
+            Loading...
+        </div>
+    );
+}
 
     if (!dashboard) {
 
@@ -101,12 +83,7 @@ export default function Dashboard() {
     }
 
     return (
-
-        <Background>
-
-            <Navbar />
-
-            <div className="min-h-screen max-w-7xl mx-auto px-8 py-10">
+        <PageContainer>
 
                 {/* Hero */}
 
@@ -195,9 +172,7 @@ export default function Dashboard() {
 
                 </div>
 
-            </div>
-
-        </Background>
+            </PageContainer>
 
     );
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -15,20 +16,19 @@ export default function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
 
-    const role =
-        typeof window !== "undefined"
-            ? localStorage.getItem("role")
-            : null;
+    const [role, setRole] = useState(null);
+    const [name, setName] = useState("");
 
-    const name =
-        typeof window !== "undefined"
-            ? localStorage.getItem("name")
-            : "";
+    useEffect(() => {
+
+        setRole(localStorage.getItem("role"));
+        setName(localStorage.getItem("name") || "");
+
+    }, []);
 
     const handleLogout = () => {
 
         localStorage.clear();
-
         router.push("/login");
 
     };
@@ -40,6 +40,18 @@ export default function Navbar() {
                 : "text-gray-300 hover:bg-white/10 hover:text-white"
         }`;
 
+    if (role === null) {
+
+        return (
+            <header className="sticky top-0 z-50">
+                <div className="mx-auto max-w-7xl px-6 py-5">
+                    <nav className="h-20 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-2xl" />
+                </div>
+            </header>
+        );
+
+    }
+
     return (
 
         <header className="sticky top-0 z-50">
@@ -50,8 +62,6 @@ export default function Navbar() {
 
                     <div className="flex h-20 items-center justify-between px-8">
 
-                        {/* Logo */}
-
                         <Link
                             href="/dashboard"
                             className="text-3xl font-black bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-500 bg-clip-text text-transparent"
@@ -59,14 +69,10 @@ export default function Navbar() {
                             PlacementAI
                         </Link>
 
-                        {/* Navigation */}
-
                         <div className="flex items-center gap-3">
 
                             {role === "student" && (
-
                                 <>
-
                                     <Link
                                         href="/dashboard"
                                         className={linkStyle("/dashboard")}
@@ -98,14 +104,10 @@ export default function Navbar() {
                                         <FaUser />
                                         Profile
                                     </Link>
-
                                 </>
-
                             )}
 
                         </div>
-
-                        {/* Right */}
 
                         <div className="flex items-center gap-4">
 

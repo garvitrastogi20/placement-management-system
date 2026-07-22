@@ -1,109 +1,113 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import api from "@/services/api";
 import toast from "react-hot-toast";
 
 export default function ResumeUpload() {
+    const [file, setFile] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    const [file, setFile] =
-        useState(null);
+    const fileInputRef = useRef(null);
 
-    const [loading, setLoading] =
-        useState(false);
+    const handleFileChange = (e) => {
+        const selectedFile = e.target.files[0];
 
-    const handleUpload =
-        async () => {
+        if (!selectedFile) return;
 
-            if (!file) {
+        if (selectedFile.type !== "application/pdf") {
+            toast.error("Only PDF files are allowed.");
+            return;
+        }
 
-                toast.error(
-                    "Select a file first"
-                );
+        setFile(selectedFile);
+    };
 
-                return;
-            }
+    const handleUpload = async () => {
+        if (!file) {
+            toast.error("Please select a resume first.");
+            return;
+        }
 
-            try {
+        try {
+            setLoading(true);
 
-                setLoading(true);
+            const formData = new FormData();
+            formData.append("resume", file);
 
-                const formData =
-                    new FormData();
+            const token = localStorage.getItem("token");
 
-                formData.append(
-                    "resume",
-                    file
-                );
+            const res = await api.post(
+                "/student/upload-resume",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
 
-                const token =
-                    localStorage.getItem(
-                        "token"
-                    );
+            toast.success("Resume uploaded successfully!");
 
-                const res =
-                    await api.post(
-                        "/student/upload-resume",
-                        formData,
-                        {
-                            headers: {
-                                Authorization:
-                                    `Bearer ${token}`,
-                                "Content-Type":
-                                    "multipart/form-data",
-                            },
-                        }
-                    );
+            console.log(res.data);
 
-                toast.success(
-                    "Resume Uploaded"
-                );
-
-                console.log(
-                    res.data
-                );
-
-            } catch (error) {
-
-                toast.error(
-                    error.response?.data
-                        ?.message ||
-                    "Upload Failed"
-                );
-
-            } finally {
-
-                setLoading(false);
-
-            }
-        };
+            // Optional: clear selected file after upload
+            setFile(null);
+            fileInputRef.current.value = "";
+        } catch (error) {
+            toast.error(
+                error.response?.data?.message || "Upload failed"
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
 
-            <h2 className="text-2xl font-bold mb-4">
+            <h2 className="text-2xl font-bold text-white mb-6">
                 Upload Resume
             </h2>
 
+            {/* Hidden File Input */}
             <input
+                ref={fileInputRef}
                 type="file"
                 accept=".pdf"
-                onChange={(e) =>
-                    setFile(
-                        e.target.files[0]
-                    )
-                }
-                className="mb-4 block"
+                onChange={handleFileChange}
+                className="hidden"
             />
 
+            {/* Select Resume Button */}
+            <button
+                onClick={() => fileInputRef.current.click()}
+                className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-5 py-3 rounded-xl transition"
+            >
+                📄 Select Resume
+            </button>
+
+            {/* Selected File */}
+            <div className="mt-4">
+                {file ? (
+                    <p className="text-green-400 font-medium">
+                        Selected: {file.name}
+                    </p>
+                ) : (
+                    <p className="text-gray-400">
+                        No file selected
+                    </p>
+                )}
+            </div>
+
+            {/* Upload Button */}
             <button
                 onClick={handleUpload}
                 disabled={loading}
-                className="bg-blue-600 px-5 py-2 rounded-lg hover:bg-blue-700"
+                className="mt-6 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-xl font-semibold transition"
             >
-                {loading
-                    ? "Uploading..."
-                    : "Upload Resume"}
+                {loading ? "Uploading..." : "Upload Resume"}
             </button>
 
         </div>
