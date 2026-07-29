@@ -5,12 +5,15 @@ const protect = require("../middleware/authMiddleware");
 const authorizeRoles =
     require("../middleware/roleMiddleware");
 
+
+    
 const {
     createJob,
     applyJob,
     getApplicants,
     getAllJobs,
     getMyApplications,
+    getJobById,
 } = require("../controllers/jobController");
 
 // Recruiter creates a job
@@ -30,7 +33,7 @@ router.post(
 );
 
 // Get all jobs
-router.get("/", getAllJobs);
+router.get("/", protect, getAllJobs);
 
 // Get student's applications
 router.get(
@@ -38,6 +41,12 @@ router.get(
     protect,
     authorizeRoles("student"),
     getMyApplications
+);
+
+router.get(
+    "/:jobId",
+    protect,
+    getJobById
 );
 
 // Recruiter views applicants for a job

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import toast from "react-hot-toast";
 
 import PageContainer from "@/components/layout/PageContainer";
 import Navbar from "@/components/Navbar";
@@ -23,7 +25,10 @@ export default function MyApplicationsPage() {
 
                 setApplications(res.data);
             } catch (error) {
-                console.log(error);
+                toast.error(
+                    error.response?.data?.message ||
+                        "Failed to load applications."
+                );
             } finally {
                 setLoading(false);
             }
@@ -42,6 +47,9 @@ export default function MyApplicationsPage() {
 
             case "Rejected":
                 return "bg-red-900 text-red-300";
+
+            case "Under Review":
+                return "bg-indigo-900 text-indigo-300";
 
             default:
                 return "bg-yellow-900 text-yellow-300";
@@ -70,8 +78,15 @@ export default function MyApplicationsPage() {
                         </h2>
 
                         <p className="mt-3 text-gray-400">
-                            You have not applied for any jobs yet.
+                            You haven't applied for any jobs yet.
                         </p>
+
+                        <Link
+                            href="/jobs"
+                            className="mt-6 inline-block rounded-xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
+                        >
+                            Browse Jobs
+                        </Link>
                     </div>
                 ) : (
                     <div className="space-y-6">
@@ -80,8 +95,10 @@ export default function MyApplicationsPage() {
                                 key={app._id}
                                 className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg backdrop-blur-lg transition hover:border-blue-500/40 hover:shadow-xl"
                             >
-                                <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                                <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+
                                     <div>
+
                                         <h2 className="text-2xl font-bold text-white">
                                             {app.job?.title}
                                         </h2>
@@ -96,17 +113,46 @@ export default function MyApplicationsPage() {
 
                                         <p className="mt-3 text-lg font-semibold text-green-400">
                                             ₹{" "}
-                                            {app.job?.package?.toLocaleString()}
+                                            {app.job?.package?.toLocaleString(
+                                                "en-IN"
+                                            )}
                                         </p>
+
+                                        <p className="mt-3 text-sm text-gray-400">
+                                            Applied on{" "}
+                                            {new Date(
+                                                app.createdAt
+                                            ).toLocaleDateString("en-IN")}
+                                        </p>
+
+                                        {app.job?.deadline && (
+                                            <p className="mt-1 text-sm text-gray-500">
+                                                Deadline:{" "}
+                                                {new Date(
+                                                    app.job.deadline
+                                                ).toLocaleDateString("en-IN")}
+                                            </p>
+                                        )}
                                     </div>
 
-                                    <span
-                                        className={`rounded-full px-5 py-2 text-sm font-semibold ${getStatusColor(
-                                            app.status
-                                        )}`}
-                                    >
-                                        {app.status}
-                                    </span>
+                                    <div className="flex flex-col items-end gap-4">
+
+                                        <span
+                                            className={`rounded-full px-5 py-2 text-sm font-semibold ${getStatusColor(
+                                                app.status
+                                            )}`}
+                                        >
+                                            {app.status}
+                                        </span>
+
+                                        <Link
+                                            href={`/jobs/${app.job?._id}`}
+                                            className="rounded-xl bg-blue-600 px-5 py-2 font-medium text-white transition hover:bg-blue-700"
+                                        >
+                                            View Job
+                                        </Link>
+
+                                    </div>
                                 </div>
                             </div>
                         ))}

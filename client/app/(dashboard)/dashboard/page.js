@@ -129,48 +129,77 @@ export default function Dashboard() {
 
                 {/* Resume */}
 
-                <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-xl">
+<div className="mt-8 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-xl">
 
-                    <h2 className="text-2xl font-bold mb-4">
+    <h2 className="text-2xl font-bold mb-6">
+        Resume
+    </h2>
 
-                        Resume
+    {dashboard.profile.resume?.url ? (
 
-                    </h2>
+        <div>
 
-                    {dashboard.profile.resumeUrl ? (
+            <div className="flex items-center justify-between flex-wrap gap-4">
 
-                        <a
-                            href={dashboard.profile.resumeUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-3 font-semibold transition hover:scale-105"
-                        >
+                <div>
 
-                            View Resume
+                    <p className="text-xl font-semibold">
+                        📄 {dashboard.profile.resume.originalName}
+                    </p>
 
-                        </a>
-
-                    ) : (
-
-                        <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-5">
-
-                            <p className="text-red-400 font-medium">
-
-                                Resume not uploaded yet.
-
-                            </p>
-
-                            <p className="text-gray-400 text-sm mt-2">
-
-                                Upload your resume to increase your chances of getting shortlisted.
-
-                            </p>
-
-                        </div>
-
-                    )}
+                    <p className="text-gray-400 mt-2">
+                        Uploaded on{" "}
+                        {dashboard.profile.resume.uploadedAt
+                            ? new Date(
+                                  dashboard.profile.resume.uploadedAt
+                              ).toLocaleDateString()
+                            : "N/A"}
+                    </p>
 
                 </div>
+
+                <div className="flex gap-3 flex-wrap">
+
+                    <a
+                        href={dashboard.profile.resume.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 font-semibold transition hover:scale-105"
+                    >
+                        👁 View
+                    </a>
+
+                    <a
+                        href={dashboard.profile.resume.url}
+                        download={dashboard.profile.resume.originalName}
+                        className="rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 px-5 py-3 font-semibold transition hover:scale-105"
+                    >
+                        ⬇ Download
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    ) : (
+
+        <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-5">
+
+            <p className="text-red-400 font-medium">
+                Resume not uploaded yet.
+            </p>
+
+            <p className="text-gray-400 text-sm mt-2">
+                Upload your resume to increase your chances of getting shortlisted.
+            </p>
+
+        </div>
+
+    )}
+
+</div>
 
             </PageContainer>
 

@@ -15,8 +15,9 @@ const {
     getStudentProfile,
     getStudentDashboard,
     uploadResume,
+    deleteResume,
+    updateStudentProfile,
 } = require("../controllers/studentController");
-
 
 router.post(
     "/profile",
@@ -47,5 +48,18 @@ router.post(
     uploadResume
 );
 
+router.delete(
+    "/delete-resume",
+    protect,
+    authorizeRoles("student"),
+    deleteResume
+);
+
+router.put(
+    "/profile",
+    protect,
+    authorizeRoles("student"),
+    updateStudentProfile
+);
 
 module.exports = router;

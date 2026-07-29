@@ -1,82 +1,76 @@
 "use client";
-
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import api from "@/services/api";
 import toast from "react-hot-toast";
 
-export default function JobCard({ job }) {
+export default function JobCard({ job, isApplied, onApplied }) {
+  const [loading, setLoading] = useState(false);
+  const [applied, setApplied] = useState(isApplied);
+  useEffect(() => {
+    setApplied(isApplied);
+  }, [isApplied]);
 
-    const [loading, setLoading] =
-        useState(false);
+  const handleApply = async (e) => {
+    e.stopPropagation();
+    try {
+      setLoading(true);
 
-    const handleApply = async () => {
+      const token = localStorage.getItem("token");
 
-        try {
+      const res = await api.post(
+        `/jobs/${job._id}/apply`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
-            setLoading(true);
+      toast.success(res.data.message);
+      setApplied(true);
 
-            const token =
-                localStorage.getItem("token");
+      if (onApplied) {
+        onApplied(job._id);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Application Failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            const res = await api.post(
-                `/jobs/${job._id}/apply`,
-                {},
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`,
-                    },
-                }
-            );
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition overflow-hidden">
+      <Link
+        href={`/jobs/${job._id}`}
+        className="block p-6 hover:bg-gray-800/40 transition"
+      >
+        <h2 className="text-2xl font-bold text-white">{job.title}</h2>
 
-            toast.success(
-                res.data.message
-            );
+        <p className="mt-2 text-gray-400">{job.company}</p>
 
-        } catch (error) {
+        <p className="mt-2 text-gray-300">📍 {job.location}</p>
 
-            toast.error(
-                error.response?.data
-                    ?.message ||
-                "Application Failed"
-            );
+        <p className="mt-2 font-semibold text-green-400">
+          ₹ {job.package?.toLocaleString()}
+        </p>
+      </Link>
 
-        } finally {
-
-            setLoading(false);
-
-        }
-    };
-
-    return (
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-lg hover:scale-105 transition">
-
-            <h2 className="text-2xl font-bold text-white">
-                {job.title}
-            </h2>
-
-            <p className="text-gray-400 mt-2">
-                {job.company}
-            </p>
-
-            <p className="text-gray-300 mt-2">
-                📍 {job.location}
-            </p>
-
-            <p className="mt-2 font-semibold text-green-400">
-                ₹ {job.package?.toLocaleString()}
-            </p>
-
-            <button
-                onClick={handleApply}
-                disabled={loading}
-                className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-            >
-                {loading
-                    ? "Applying..."
-                    : "Apply Now"}
-            </button>
-
-        </div>
-    );
+      <div className="px-6 pb-6">
+        <button
+          onClick={handleApply}
+          disabled={loading || applied}
+          className={`w-full py-2 rounded-lg text-white transition ${
+            applied
+              ? "bg-green-600 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
+        >
+          {loading ? "Applying..." : applied ? "✓ Applied" : "Apply Now"}
+        </button>
+      </div>
+    </div>
+  );
 }

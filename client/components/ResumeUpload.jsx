@@ -4,28 +4,26 @@ import { useRef, useState } from "react";
 import api from "@/services/api";
 import toast from "react-hot-toast";
 
-export default function ResumeUpload() {
-    const [file, setFile] = useState(null);
+export default function ResumeUpload({
+    buttonText = "📄 Upload Resume",
+    onUploadSuccess,
+}) {
     const [loading, setLoading] = useState(false);
 
     const fileInputRef = useRef(null);
 
-    const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0];
+    const handleFileChange = async (e) => {
+        const selectedFile = e.target.files?.[0];
 
         if (!selectedFile) return;
 
         if (selectedFile.type !== "application/pdf") {
             toast.error("Only PDF files are allowed.");
-            return;
-        }
 
-        setFile(selectedFile);
-    };
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
 
-    const handleUpload = async () => {
-        if (!file) {
-            toast.error("Please select a resume first.");
             return;
         }
 
@@ -33,7 +31,7 @@ export default function ResumeUpload() {
             setLoading(true);
 
             const formData = new FormData();
-            formData.append("resume", file);
+            formData.append("resume", selectedFile);
 
             const token = localStorage.getItem("token");
 
@@ -48,13 +46,17 @@ export default function ResumeUpload() {
                 }
             );
 
-            toast.success("Resume uploaded successfully!");
-
             console.log(res.data);
 
-            // Optional: clear selected file after upload
-            setFile(null);
-            fileInputRef.current.value = "";
+            toast.success("Resume uploaded successfully!");
+
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+
+            if (onUploadSuccess) {
+                await onUploadSuccess();
+            }
         } catch (error) {
             toast.error(
                 error.response?.data?.message || "Upload failed"
@@ -65,13 +67,7 @@ export default function ResumeUpload() {
     };
 
     return (
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-
-            <h2 className="text-2xl font-bold text-white mb-6">
-                Upload Resume
-            </h2>
-
-            {/* Hidden File Input */}
+        <>
             <input
                 ref={fileInputRef}
                 type="file"
@@ -80,36 +76,14 @@ export default function ResumeUpload() {
                 className="hidden"
             />
 
-            {/* Select Resume Button */}
             <button
-                onClick={() => fileInputRef.current.click()}
-                className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-5 py-3 rounded-xl transition"
-            >
-                📄 Select Resume
-            </button>
-
-            {/* Selected File */}
-            <div className="mt-4">
-                {file ? (
-                    <p className="text-green-400 font-medium">
-                        Selected: {file.name}
-                    </p>
-                ) : (
-                    <p className="text-gray-400">
-                        No file selected
-                    </p>
-                )}
-            </div>
-
-            {/* Upload Button */}
-            <button
-                onClick={handleUpload}
+                type="button"
                 disabled={loading}
-                className="mt-6 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-xl font-semibold transition"
+                onClick={() => fileInputRef.current?.click()}
+                className="rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 px-5 py-3 text-white font-semibold transition"
             >
-                {loading ? "Uploading..." : "Upload Resume"}
+                {loading ? "Uploading..." : buttonText}
             </button>
-
-        </div>
+        </>
     );
 }
