@@ -7,113 +7,94 @@ import { useEffect, useState } from "react";
 import Logo from "../common/Logo";
 
 import {
-    FaHome,
-    FaBriefcase,
-    FaFileAlt,
-    FaUser,
-    FaSignOutAlt,
-    FaChartLine,
-    FaCog,
+  FaHome,
+  FaBriefcase,
+  FaFileAlt,
+  FaUser,
+  FaSignOutAlt,
+  FaChartLine,
+  FaCog,
 } from "react-icons/fa";
 
 export default function Sidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
 
-    const pathname = usePathname();
-    const router = useRouter();
+  const [user, setUser] = useState({
+    name: "",
+    role: "",
+  });
 
-    const [user, setUser] = useState({
-        name: "",
-        role: "",
+  useEffect(() => {
+    setUser({
+      name: localStorage.getItem("name") || "Student",
+      role: localStorage.getItem("role") || "student",
     });
+  }, []);
 
-    useEffect(() => {
+  const menu = [
+    {
+      title: "Dashboard",
+      icon: <FaHome />,
+      href: "/dashboard",
+    },
 
-        setUser({
-            name: localStorage.getItem("name") || "Student",
-            role: localStorage.getItem("role") || "student",
-        });
+    {
+      title: user.role === "recruiter" ? "Manage Jobs" : "Jobs",
+      icon: <FaBriefcase />,
+      href: user.role === "recruiter" ? "/manage-jobs" : "/jobs",
+    },
 
-    }, []);
+    {
+      title: "Applications",
+      icon: <FaFileAlt />,
+      href: "/my-applications",
+    },
 
-    const menu = [
+    {
+      title: "Profile",
+      icon: <FaUser />,
+      href: "/profile",
+    },
 
-        {
-            title: "Dashboard",
-            icon: <FaHome />,
-            href: "/dashboard",
-        },
+    {
+      title: "Analytics",
+      icon: <FaChartLine />,
+      href: "#",
+      disabled: true,
+    },
 
-        {
-            title: "Jobs",
-            icon: <FaBriefcase />,
-            href: "/jobs",
-        },
+    {
+      title: "Settings",
+      icon: <FaCog />,
+      href: "#",
+      disabled: true,
+    },
+  ];
 
-        {
-            title: "Applications",
-            icon: <FaFileAlt />,
-            href: "/my-applications",
-        },
+  const logout = () => {
+    localStorage.clear();
 
-        {
-            title: "Profile",
-            icon: <FaUser />,
-            href: "/profile",
-        },
+    router.push("/login");
+  };
 
-        {
-            title: "Analytics",
-            icon: <FaChartLine />,
-            href: "#",
-            disabled: true,
-        },
+  return (
+    <aside className="fixed left-0 top-0 h-screen w-72 border-r border-white/10 bg-slate-950/90 backdrop-blur-2xl">
+      <div className="flex h-full flex-col">
+        {/* Logo */}
 
-        {
-            title: "Settings",
-            icon: <FaCog />,
-            href: "#",
-            disabled: true,
-        },
+        <div className="border-b border-white/10 p-8">
+          <Logo />
+        </div>
 
-    ];
+        {/* Menu */}
 
-    const logout = () => {
-
-        localStorage.clear();
-
-        router.push("/login");
-
-    };
-
-    return (
-
-        <aside className="fixed left-0 top-0 h-screen w-72 border-r border-white/10 bg-slate-950/90 backdrop-blur-2xl">
-
-            <div className="flex h-full flex-col">
-
-                {/* Logo */}
-
-                <div className="border-b border-white/10 p-8">
-
-                    <Logo />
-
-                </div>
-
-                {/* Menu */}
-
-                <div className="flex-1 p-5 space-y-2">
-
-                    {
-
-                        menu.map((item) => (
-
-                            <Link
-
-                                key={item.title}
-
-                                href={item.disabled ? "#" : item.href}
-
-                                className={`
+        <div className="flex-1 p-5 space-y-2">
+          {menu.map((item) => (
+            <Link
+              key={item.title}
+              href={item.disabled ? "#" : item.href}
+              className={`
                                 flex
                                 items-center
                                 gap-4
@@ -124,93 +105,51 @@ export default function Sidebar() {
                                 duration-300
 
                                 ${
-                                    pathname === item.href
-                                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
-                                        : "text-gray-400 hover:bg-white/5 hover:text-white"
+                                  pathname === item.href
+                                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
+                                    : "text-gray-400 hover:bg-white/5 hover:text-white"
                                 }
 
                                 ${
-                                    item.disabled &&
-                                    "pointer-events-none opacity-40"
+                                  item.disabled &&
+                                  "pointer-events-none opacity-40"
                                 }
 
                             `}
-                            >
+            >
+              <span className="text-lg">{item.icon}</span>
 
-                                <span className="text-lg">
+              <span>{item.title}</span>
+            </Link>
+          ))}
+        </div>
 
-                                    {item.icon}
+        {/* User */}
 
-                                </span>
-
-                                <span>
-
-                                    {item.title}
-
-                                </span>
-
-                            </Link>
-
-                        ))
-
-                    }
-
-                </div>
-
-                {/* User */}
-
-                <div className="border-t border-white/10 p-6">
-
-                    <div className="mb-5 flex items-center gap-4">
-
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-xl font-bold">
-
-                            {user.name.charAt(0)}
-
-                        </div>
-
-                        <div>
-
-                            <h3 className="font-semibold">
-
-                                {user.name}
-
-                            </h3>
-
-                            <p className="text-sm text-gray-400 capitalize">
-
-                                {user.role}
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <button
-
-                        onClick={logout}
-
-                        className="w-full rounded-xl bg-red-600 py-3 transition hover:bg-red-700"
-
-                    >
-
-                        <div className="flex items-center justify-center gap-3">
-
-                            <FaSignOutAlt />
-
-                            Logout
-
-                        </div>
-
-                    </button>
-
-                </div>
-
+        <div className="border-t border-white/10 p-6">
+          <div className="mb-5 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-xl font-bold">
+              {user.name.charAt(0)}
             </div>
 
-        </aside>
+            <div>
+              <h3 className="font-semibold">{user.name}</h3>
 
-    );
+              <p className="text-sm text-gray-400 capitalize">{user.role}</p>
+            </div>
+          </div>
 
+          <button
+            onClick={logout}
+            className="w-full rounded-xl bg-red-600 py-3 transition hover:bg-red-700"
+          >
+            <div className="flex items-center justify-center gap-3">
+              <FaSignOutAlt />
+              Logout
+            </div>
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
 }

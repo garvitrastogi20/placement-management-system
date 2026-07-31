@@ -1,22 +1,14 @@
-import Sidebar from "@/components/layout/Sidebar";
+import StudentSidebar from "@/components/student/StudentSidebar";
 import Background from "@/components/ui/Background";
 
-export default function DashboardLayout({
+export default function StudentLayout({ children }) {
+  return (
+    <Background>
+      <StudentSidebar />
 
-    children,
-
-}) {
-
-    return (
-
-        <Background>
-
-            <Sidebar />
-
-            {children}
-
-        </Background>
-
-    );
-
+      <main className="ml-72 min-h-screen p-8">
+        {children}
+      </main>
+    </Background>
+  );
 }

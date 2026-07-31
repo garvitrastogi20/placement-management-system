@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 import ResumeUpload from "@/components/ResumeUpload";
 import api from "@/services/api";
 import toast from "react-hot-toast";

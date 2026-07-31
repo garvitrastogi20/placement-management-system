@@ -8,8 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const logger = require("./middleware/loggerMiddleware");
 const studentRoutes = require("./routes/studentRoutes");
 const app = express();
-const recruiterRoutes =
-    require("./routes/recruiterRoutes");
+const recruiterRoutes = require("./routes/recruiterRoutes");
 const applicationRoutes =
     require("./routes/applicationRoutes");
 connectDB();
@@ -26,10 +25,8 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/student", studentRoutes);
 
-app.use(
-    "/api/recruiter",
-    recruiterRoutes
-);
+app.use("/api/recruiter", recruiterRoutes);
+
 app.use(
     "/api/applications",
     applicationRoutes

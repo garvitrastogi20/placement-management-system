@@ -184,6 +184,35 @@ const getMyApplications = async (req, res) => {
   }
 };
 
+const getRecruiterJobs = async (req, res) => {
+  try {
+    const jobs = await Job.find({
+      recruiter: req.user.id,
+    })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const jobsWithApplicants = await Promise.all(
+      jobs.map(async (job) => {
+        const applicantCount = await Application.countDocuments({
+          job: job._id,
+        });
+
+        return {
+          ...job,
+          applicantCount,
+        };
+      })
+    );
+
+    res.status(200).json(jobsWithApplicants);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createJob,
   applyJob,
@@ -191,4 +220,5 @@ module.exports = {
   getAllJobs,
   getMyApplications,
   getJobById,
+  getRecruiterJobs,
 };

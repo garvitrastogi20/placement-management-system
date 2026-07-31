@@ -5,7 +5,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 
 import PageContainer from "@/components/layout/PageContainer";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 import api from "@/services/api";
 
 export default function MyApplicationsPage() {

@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 
 import PageContainer from "@/components/layout/PageContainer";
-import Navbar from "@/components/Navbar";
-import JobCard from "@/components/JobCard";
+import Navbar from "@/components/layout/Navbar";
+import JobCard from "@/components/jobs/JobCard";
 import api from "@/services/api";
 
 export default function JobsPage() {

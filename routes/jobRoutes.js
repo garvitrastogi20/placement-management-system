@@ -8,12 +8,11 @@ const authorizeRoles =
 
     
 const {
-    createJob,
-    applyJob,
-    getApplicants,
-    getAllJobs,
-    getMyApplications,
-    getJobById,
+  createJob,
+  applyJob,
+  getAllJobs,
+  getMyApplications,
+  getJobById
 } = require("../controllers/jobController");
 
 // Recruiter creates a job
@@ -43,18 +42,12 @@ router.get(
     getMyApplications
 );
 
+
 router.get(
     "/:jobId",
     protect,
     getJobById
 );
 
-// Recruiter views applicants for a job
-router.get(
-    "/:jobId/applicants",
-    protect,
-    authorizeRoles("recruiter"),
-    getApplicants
-);
 
 module.exports = router;

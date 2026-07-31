@@ -3,8 +3,8 @@ import PageContainer from "@/components/layout/PageContainer";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import Hero from "@/components/dashboard/Hero";
-import QuickStats from "@/components/dashboard/QuickStats";
+import Hero from "@/components/student/dashboard/Hero";
+import QuickStats from "@/components/student/dashboard/QuickStats";
 import api from "@/services/api";
 
 export default function Dashboard() {
