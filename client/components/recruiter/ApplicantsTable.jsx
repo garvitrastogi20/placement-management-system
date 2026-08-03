@@ -2,7 +2,7 @@
 
 import { FaCheckCircle, FaTimesCircle, FaUserCheck } from "react-icons/fa";
 
-export default function ApplicantsTable({ applicants = [] }) {
+export default function ApplicantsTable({ applicants = [], updateStatus }) {
   if (applicants.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-gray-700 bg-gray-900 p-10 text-center">
@@ -65,6 +65,7 @@ export default function ApplicantsTable({ applicants = [] }) {
               <td className="p-5">
                 <div className="flex flex-wrap justify-center gap-2">
                   <button
+                    onClick={() => updateStatus(app._id, "Shortlisted")}
                     className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-yellow-400"
                     title="Shortlist Candidate"
                   >
@@ -75,6 +76,7 @@ export default function ApplicantsTable({ applicants = [] }) {
                   </button>
 
                   <button
+                    onClick={() => updateStatus(app._id, "Selected")}
                     className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
                     title="Select Candidate"
                   >
@@ -85,6 +87,7 @@ export default function ApplicantsTable({ applicants = [] }) {
                   </button>
 
                   <button
+                    onClick={() => updateStatus(app._id, "Rejected")}
                     className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
                     title="Reject Candidate"
                   >

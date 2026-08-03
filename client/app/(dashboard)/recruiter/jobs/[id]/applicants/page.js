@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
-import { getApplicants } from "@/services/recruiterService";
+import {
+  getApplicants,
+  updateApplicationStatus,
+} from "@/services/recruiterService";
 
 import ApplicantsTable from "@/components/recruiter/ApplicantsTable";
 
@@ -29,6 +32,15 @@ export default function ApplicantsPage() {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+  const updateStatus = async (applicationId, status) => {
+    try {
+      await updateApplicationStatus(applicationId, status);
+
+      await fetchApplicants();
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -57,7 +69,7 @@ export default function ApplicantsPage() {
         </div>
       </div>
 
-      <ApplicantsTable applicants={applicants} />
+      <ApplicantsTable applicants={applicants} updateStatus={updateStatus} />
     </div>
   );
 }
