@@ -39,34 +39,51 @@ const getDashboard = async (req, res) => {
                 },
             });
 
-        // Recent Jobs
-        const recentJobs = await Job.find({
-            recruiter: recruiterId,
-        })
-            .sort({
-                createdAt: -1,
-            })
-            .limit(5);
+        // Recent Jobs (with Applicant Count)
+const recentJobsData = await Job.find({
+    recruiter: recruiterId,
+})
+    .sort({
+        createdAt: -1,
+    })
+    .limit(5)
+    .lean();
+
+const recentJobs = await Promise.all(
+    recentJobsData.map(async (job) => {
+
+        const applicantCount =
+            await Application.countDocuments({
+                job: job._id,
+            });
+
+        return {
+            ...job,
+            applicantCount,
+        };
+    })
+);
 
         // Recent Applications
         const recentApplications =
-            await Application.find({
-                job: {
-                    $in: jobIds,
-                },
-            })
-                .populate(
-                    "student",
-                    "name email"
-                )
-                .populate(
-                    "job",
-                    "title"
-                )
-                .sort({
-                    createdAt: -1,
-                })
-                .limit(5);
+    await Application.find({
+        job: {
+            $in: jobIds,
+        },
+    })
+        .populate(
+            "student",
+            "name email"
+        )
+        .populate(
+            "job",
+            "title company"
+        )
+        .sort({
+            createdAt: -1,
+        })
+        .limit(5)
+        .lean();
 
         res.status(200).json({
             stats: {
@@ -126,7 +143,36 @@ const getRecruiterJobs = async (req, res) => {
 };
 
 /**
- * @desc Get Applicants of a Job
+ * @desc Get Single Recruiter Job
+ * @route GET /api/recruiter/jobs/:jobId
+ * @access Recruiter
+ */
+const getSingleJob = async (req, res) => {
+    try {
+
+        const { jobId } = req.params;
+
+        const job = await Job.findOne({
+            _id: jobId,
+            recruiter: req.user.id,
+        });
+
+        if (!job) {
+            return res.status(404).json({
+                message: "Job not found",
+            });
+        }
+
+        res.status(200).json(job);
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+};
+/**
+ * @desc Get Applicants for a Job
  * @route GET /api/recruiter/jobs/:jobId/applicants
  * @access Recruiter
  */
@@ -135,16 +181,68 @@ const getApplicants = async (req, res) => {
 
         const { jobId } = req.params;
 
-        const applicants =
-            await Application.find({
-                job: jobId,
-            })
-                .populate(
-                    "student",
-                    "name email role"
-                );
+        // Check whether the job exists
+        const job = await Job.findById(jobId);
+
+        if (!job) {
+            return res.status(404).json({
+                message: "Job not found",
+            });
+        }
+
+        const applicants = await Application.find({
+            job: jobId,
+        })
+            .populate(
+                "student",
+                "name email role"
+            )
+            .sort({
+                createdAt: -1,
+            });
 
         res.status(200).json(applicants);
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message,
+        });
+
+    }
+};
+
+
+/**
+ * @desc Delete Job
+ * @route DELETE /api/recruiter/jobs/:jobId
+ * @access Recruiter
+ */
+const deleteJob = async (req, res) => {
+    try {
+
+        const { jobId } = req.params;
+
+        const job = await Job.findOne({
+            _id: jobId,
+            recruiter: req.user.id,
+        });
+
+        if (!job) {
+            return res.status(404).json({
+                message: "Job not found",
+            });
+        }
+
+        await Application.deleteMany({
+            job: jobId,
+        });
+
+        await Job.findByIdAndDelete(jobId);
+
+        res.status(200).json({
+            message: "Job deleted successfully",
+        });
 
     } catch (error) {
         res.status(500).json({
@@ -152,9 +250,65 @@ const getApplicants = async (req, res) => {
         });
     }
 };
+/**
+ * @desc Update Job
+ * @route PUT /api/recruiter/jobs/:jobId
+ * @access Recruiter
+ */
+const updateJob = async (req, res) => {
+    try {
 
+        const { jobId } = req.params;
+
+        const job = await Job.findOne({
+            _id: jobId,
+            recruiter: req.user.id,
+        });
+
+        if (!job) {
+            return res.status(404).json({
+                message: "Job not found",
+            });
+        }
+
+        const {
+            title,
+            company,
+            location,
+            package,
+            description,
+            skillsRequired,
+            deadline,
+        } = req.body;
+
+        job.title = title ?? job.title;
+        job.company = company ?? job.company;
+        job.location = location ?? job.location;
+        job.package = package ?? job.package;
+        job.description = description ?? job.description;
+        job.skillsRequired = skillsRequired ?? job.skillsRequired;
+        job.deadline = deadline ?? job.deadline;
+
+        await job.save();
+
+        res.status(200).json({
+            message: "Job Updated Successfully",
+            job,
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message,
+        });
+
+    }
+};
 module.exports = {
     getDashboard,
     getRecruiterJobs,
     getApplicants,
+    getSingleJob,
+    updateJob,
+    deleteJob,
 };
