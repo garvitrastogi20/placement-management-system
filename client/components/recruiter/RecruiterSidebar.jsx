@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ import {
   FaUser,
   FaCog,
   FaSignOutAlt,
+  FaCamera,
 } from "react-icons/fa";
 
 export default function RecruiterSidebar() {
@@ -24,12 +26,13 @@ export default function RecruiterSidebar() {
   const [user, setUser] = useState({
     name: "",
     role: "",
+    profileImage: "",
   });
 
+  // Load recruiter information
   useEffect(() => {
     const role = localStorage.getItem("role");
 
-    // Prevent students from accessing recruiter pages
     if (role !== "recruiter") {
       router.replace("/dashboard");
       return;
@@ -38,8 +41,26 @@ export default function RecruiterSidebar() {
     setUser({
       name: localStorage.getItem("name") || "Recruiter",
       role,
+      profileImage: localStorage.getItem("recruiterProfileImage") || "",
     });
   }, [router]);
+
+  // Listen for profile changes
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      setUser((prev) => ({
+        ...prev,
+        name: localStorage.getItem("name") || prev.name,
+        profileImage: localStorage.getItem("recruiterProfileImage") || "",
+      }));
+    };
+
+    window.addEventListener("profileUpdated", handleProfileUpdate);
+
+    return () => {
+      window.removeEventListener("profileUpdated", handleProfileUpdate);
+    };
+  }, []);
 
   const menu = [
     {
@@ -65,8 +86,7 @@ export default function RecruiterSidebar() {
     {
       title: "Analytics",
       icon: <FaChartLine />,
-      href: "#",
-      disabled: true,
+      href: "/recruiter/analytics",
     },
     {
       title: "Profile",
@@ -76,8 +96,7 @@ export default function RecruiterSidebar() {
     {
       title: "Settings",
       icon: <FaCog />,
-      href: "#",
-      disabled: true,
+      href: "/recruiter/settings",
     },
   ];
 
@@ -86,60 +105,277 @@ export default function RecruiterSidebar() {
     router.replace("/login");
   };
 
+  const openProfile = () => {
+    router.push("/recruiter/profile");
+  };
+
+  const getInitial = () => {
+    if (!user.name) return "R";
+
+    return user.name.trim().charAt(0).toUpperCase();
+  };
+
   return (
-    <aside className="fixed left-0 top-0 h-screen w-72 border-r border-white/10 bg-slate-950/90 backdrop-blur-2xl">
+    <aside
+      className="
+        fixed
+        left-0
+        top-0
+        h-screen
+        w-72
+        border-r
+        border-[#C97B3C]/10
+        bg-gradient-to-b
+        from-[#14110F]
+        via-[#0F0F10]
+        to-[#09090B]
+        backdrop-blur-2xl
+      "
+    >
       <div className="flex h-full flex-col">
-        {/* Logo */}
-        <div className="border-b border-white/10 p-8">
+        {/* =====================================================
+            LOGO
+        ====================================================== */}
+
+        <div className="border-b border-[#C97B3C]/10 p-7">
           <Logo />
         </div>
 
-        {/* Menu */}
-        <div className="flex-1 space-y-2 p-5">
-          {menu.map((item) => (
-            <Link
-              key={item.title}
-              href={item.disabled ? "#" : item.href}
-              className={`
-                flex items-center gap-4 rounded-2xl px-5 py-4
-                transition-all duration-300
-                ${
-                  pathname === item.href
-                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
-                    : "text-gray-400 hover:bg-white/5 hover:text-white"
-                }
-                ${item.disabled ? "pointer-events-none opacity-40" : ""}
-              `}
-            >
-              <span className="text-lg">{item.icon}</span>
-              <span>{item.title}</span>
-            </Link>
-          ))}
+        {/* =====================================================
+            NAVIGATION
+        ====================================================== */}
+
+        <div className="flex-1 overflow-y-auto px-5 py-6">
+          <p className="mb-3 px-4 text-xs font-semibold uppercase tracking-[0.35em] text-[#C97B3C]">
+            Main
+          </p>
+
+          <div className="space-y-2">
+            {menu.map((item) => {
+              const active =
+                pathname === item.href ||
+                (item.href !== "/recruiter/dashboard" &&
+                  pathname.startsWith(item.href));
+
+              return (
+                <Link
+                  key={item.title}
+                  href={item.disabled ? "#" : item.href}
+                  className={`
+                    group
+                    relative
+                    flex
+                    items-center
+                    gap-4
+                    rounded-2xl
+                    px-5
+                    py-4
+                    transition-all
+                    duration-300
+
+                    ${
+                      active
+                        ? `
+                          bg-gradient-to-r
+                          from-[#C97B3C]
+                          to-[#F4C27A]
+                          text-black
+                          shadow-[0_10px_35px_rgba(201,123,60,.35)]
+                        `
+                        : `
+                          text-gray-400
+                          hover:bg-[#C97B3C]/10
+                          hover:text-[#F4C27A]
+                        `
+                    }
+
+                    ${item.disabled ? "pointer-events-none opacity-40" : ""}
+                  `}
+                >
+                  {/* Active indicator */}
+
+                  {active && (
+                    <div
+                      className="
+                        absolute
+                        left-0
+                        h-8
+                        w-1
+                        rounded-r-full
+                        bg-black/70
+                      "
+                    />
+                  )}
+
+                  {/* Icon */}
+
+                  <span
+                    className={`
+                      text-lg
+                      transition-all
+                      duration-300
+                      ${active ? "text-black" : "group-hover:scale-110"}
+                    `}
+                  >
+                    {item.icon}
+                  </span>
+
+                  {/* Title */}
+
+                  <span className="font-medium">{item.title}</span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
-        {/* User */}
-        <div className="border-t border-white/10 p-6">
-          <div className="mb-5 flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-xl font-bold">
-              {user.name.charAt(0)}
+        {/* =====================================================
+            RECRUITER PROFILE CARD
+        ====================================================== */}
+
+        <div className="border-t border-[#C97B3C]/10 p-5">
+          <button
+            type="button"
+            onClick={openProfile}
+            className="
+              group
+              mb-5
+              flex
+              w-full
+              items-center
+              gap-4
+              rounded-2xl
+              border
+              border-[#C97B3C]/10
+              bg-[#C97B3C]/5
+              p-4
+              text-left
+              transition-all
+              duration-300
+              hover:border-[#C97B3C]/30
+              hover:bg-[#C97B3C]/10
+            "
+          >
+            {/* Profile Photo */}
+
+            <div
+              className="
+                relative
+                h-12
+                w-12
+                shrink-0
+                overflow-hidden
+                rounded-full
+                border
+                border-[#C97B3C]/20
+                bg-gradient-to-br
+                from-[#C97B3C]
+                to-[#F4C27A]
+              "
+            >
+              {user.profileImage ? (
+                <Image
+                  src={user.profileImage}
+                  alt={user.name || "Recruiter"}
+                  width={48}
+                  height={48}
+                  unoptimized
+                  className="
+                    h-full
+                    w-full
+                    object-cover
+                  "
+                />
+              ) : (
+                <div
+                  className="
+                    flex
+                    h-full
+                    w-full
+                    items-center
+                    justify-center
+                    font-bold
+                    text-black
+                  "
+                >
+                  {getInitial()}
+                </div>
+              )}
+
+              {/* Small camera indicator */}
+
+              <div
+                className="
+                  absolute
+                  bottom-0
+                  right-0
+                  flex
+                  h-5
+                  w-5
+                  items-center
+                  justify-center
+                  rounded-full
+                  border-2
+                  border-[#14110F]
+                  bg-[#F4C27A]
+                  text-black
+                  opacity-0
+                  transition
+                  group-hover:opacity-100
+                "
+              >
+                <FaCamera size={8} />
+              </div>
             </div>
 
-            <div>
-              <h3 className="font-semibold">{user.name}</h3>
+            {/* Recruiter Information */}
+
+            <div className="min-w-0 flex-1">
+              <h3
+                className="
+                  truncate
+                  font-semibold
+                  text-white
+                  transition-colors
+                  duration-300
+                  group-hover:text-[#F4C27A]
+                "
+              >
+                {user.name || "Recruiter"}
+              </h3>
+
               <p className="text-sm capitalize text-gray-400">
-                {user.role}
+                {user.role || "Recruiter"}
               </p>
             </div>
-          </div>
+          </button>
+
+          {/* ===================================================
+              LOGOUT
+          ==================================================== */}
 
           <button
             onClick={logout}
-            className="w-full rounded-xl bg-red-600 py-3 transition hover:bg-red-700"
+            className="
+              flex
+              w-full
+              items-center
+              justify-center
+              gap-3
+              rounded-2xl
+              border
+              border-red-500/30
+              bg-red-500/10
+              py-3
+              font-medium
+              text-red-400
+              transition-all
+              duration-300
+              hover:bg-red-500/20
+            "
           >
-            <div className="flex items-center justify-center gap-3">
-              <FaSignOutAlt />
-              Logout
-            </div>
+            <FaSignOutAlt />
+            Logout
           </button>
         </div>
       </div>

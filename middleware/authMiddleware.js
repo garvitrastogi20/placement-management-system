@@ -1,36 +1,47 @@
 const jwt = require("jsonwebtoken");
 
 const protect = (req, res, next) => {
-    console.log("AUTH HEADER:", req.headers.authorization);
-    let token;
+  const authHeader = req.headers.authorization;
 
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith("Bearer")
-    ) {
-        token = req.headers.authorization.split(" ")[1];
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      message: "No token provided",
+    });
+  }
 
-        try {
-            const decoded = jwt.verify(
-                token,
-                process.env.JWT_SECRET
-            );
+  const token = authHeader.slice(7).trim();
 
-            req.user = decoded;
+  if (!token) {
+    return res.status(401).json({
+      message: "No token provided",
+    });
+  }
 
-            next();
-        } catch (error) {
-            return res.status(401).json({
-                message: "Invalid token",
-            });
-        }
+  if (!process.env.JWT_SECRET) {
+    console.error("JWT_SECRET is not configured.");
+    return res.status(500).json({
+      message: "Authentication service misconfigured",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"],
+    });
+
+    if (!decoded || !decoded.id) {
+      return res.status(401).json({
+        message: "Invalid token",
+      });
     }
 
-    if (!token) {
-        return res.status(401).json({
-            message: "No token provided",
-        });
-    }
+    req.user = decoded;
+    return next();
+  } catch (error) {
+    return res.status(401).json({
+      message: "Invalid token",
+    });
+  }
 };
 
 module.exports = protect;

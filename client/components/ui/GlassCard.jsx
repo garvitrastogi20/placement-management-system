@@ -1,25 +1,29 @@
-export default function GlassCard({
-    children,
-    className = "",
-}) {
-    return (
-        <div
-            className={`
-                rounded-3xl
-                border
-                border-white/10
-                bg-white/5
-                backdrop-blur-2xl
-                shadow-2xl
-                p-6
-                transition-all
-                duration-300
-                hover:border-blue-400/30
-                hover:shadow-blue-500/10
-                ${className}
-            `}
-        >
-            {children}
-        </div>
-    );
+"use client";
+
+import { motion } from "framer-motion";
+
+export default function GlassCard({ children, className = "" }) {
+  return (
+    <motion.div
+      whileHover={{
+        y: -3,
+      }}
+      transition={{
+        duration: 0.25,
+      }}
+      className={`
+        rounded-3xl
+        border
+        border-[#C97B3C]/20
+        bg-[#11100F]
+        p-6
+        shadow-[0_15px_50px_rgba(0,0,0,0.25)]
+        backdrop-blur-xl
+        sm:p-7
+        ${className}
+      `}
+    >
+      {children}
+    </motion.div>
+  );
 }

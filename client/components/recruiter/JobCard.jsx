@@ -1,52 +1,107 @@
 "use client";
 
 import Link from "next/link";
-import { FaMapMarkerAlt, FaUsers, FaCalendarAlt } from "react-icons/fa";
+
+import {
+  FaMapMarkerAlt,
+  FaUsers,
+  FaCalendarAlt,
+  FaArrowRight,
+} from "react-icons/fa";
+
+import GlassCard from "@/components/ui/GlassCard";
+import Badge from "@/components/ui/Badge";
 
 export default function JobCard({ job }) {
+  const isActive = !job.deadline || new Date(job.deadline) >= new Date();
+
   return (
-    <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 backdrop-blur-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <GlassCard className="group h-full">
+      {/* Top */}
+
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-xl font-semibold text-white">
-            {job.title}
-          </h3>
+          <h3 className="text-2xl font-bold text-white">{job.title}</h3>
 
-          <p className="mt-1 text-gray-400">
-            {job.company}
-          </p>
+          <p className="mt-2 text-gray-400">{job.company}</p>
         </div>
 
-        <span className="rounded-full bg-blue-600 px-3 py-1 text-sm">
-          ₹ {job.package}
+        <Badge variant={isActive ? "success" : "danger"}>
+          {isActive ? "Active" : "Expired"}
+        </Badge>
+      </div>
+
+      {/* Salary */}
+
+      <div className="mt-6">
+        <span
+          className="
+            inline-flex
+            rounded-xl
+            border
+            border-[#C97B3C]/20
+            bg-[#C97B3C]/10
+            px-4
+            py-2
+            text-lg
+            font-semibold
+            text-[#F4C27A]
+          "
+        >
+          ₹ {job.package} LPA
         </span>
       </div>
 
-      <div className="mt-5 space-y-3 text-gray-300">
+      {/* Details */}
 
-        <div className="flex items-center gap-2">
-          <FaMapMarkerAlt />
-          {job.location}
+      <div className="mt-8 space-y-4">
+        <div className="flex items-center gap-3 text-gray-300">
+          <FaMapMarkerAlt className="text-[#C97B3C]" />
+
+          <span>{job.location}</span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <FaUsers />
-          {job.applicantCount || 0} Applicants
+        <div className="flex items-center gap-3 text-gray-300">
+          <FaUsers className="text-[#C97B3C]" />
+
+          <span>{job.applicantCount || 0} Applicants</span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <FaCalendarAlt />
-          {new Date(job.deadline).toLocaleDateString()}
-        </div>
+        {job.deadline && (
+          <div className="flex items-center gap-3 text-gray-300">
+            <FaCalendarAlt className="text-[#C97B3C]" />
 
+            <span>{new Date(job.deadline).toLocaleDateString()}</span>
+          </div>
+        )}
       </div>
 
-      <Link
-        href={`/recruiter/jobs`}
-        className="mt-6 inline-block font-medium text-blue-400 hover:text-blue-300"
-      >
-        View Details →
-      </Link>
-    </div>
+      {/* Divider */}
+
+      <div className="my-6 h-px bg-white/10" />
+
+      {/* Footer */}
+
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-500">Posted recently</p>
+
+        <Link
+          href={`/recruiter/jobs/${job._id}/applicants`}
+          className="
+            flex
+            items-center
+            gap-2
+            font-semibold
+            text-[#F4C27A]
+            transition-all
+            duration-300
+            group-hover:gap-3
+          "
+        >
+          View Applicants
+          <FaArrowRight />
+        </Link>
+      </div>
+    </GlassCard>
   );
 }

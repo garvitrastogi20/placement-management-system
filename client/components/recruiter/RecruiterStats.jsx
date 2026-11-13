@@ -7,37 +7,41 @@ import {
   FaUserCheck,
 } from "react-icons/fa";
 
-import StatCard from "./StatCard";
+import StatCard from "@/components/ui/StatCard";
 
 export default function RecruiterStats({ stats }) {
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
       <StatCard
         title="Total Jobs"
         value={stats?.totalJobs || 0}
+        subtitle="All job postings"
         icon={<FaBriefcase />}
-        color="from-blue-500 to-cyan-500"
+        color="text-[#C97B3C]"
       />
 
       <StatCard
         title="Active Jobs"
         value={stats?.activeJobs || 0}
+        subtitle="Currently accepting applications"
         icon={<FaClipboardList />}
-        color="from-green-500 to-emerald-500"
+        color="text-green-400"
       />
 
       <StatCard
         title="Applicants"
         value={stats?.totalApplicants || 0}
+        subtitle="Across all jobs"
         icon={<FaUsers />}
-        color="from-purple-500 to-pink-500"
+        color="text-[#F4C27A]"
       />
 
       <StatCard
         title="Shortlisted"
         value={stats?.shortlisted || 0}
+        subtitle="Ready for interviews"
         icon={<FaUserCheck />}
-        color="from-orange-500 to-red-500"
+        color="text-cyan-400"
       />
     </div>
   );

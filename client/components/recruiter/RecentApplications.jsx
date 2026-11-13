@@ -2,20 +2,28 @@
 
 import ApplicantsTable from "./ApplicantsTable";
 
-export default function RecentApplications({
-  applications,
-}) {
+import GlassCard from "@/components/ui/GlassCard";
+import SectionHeader from "@/components/ui/SectionHeader";
+import EmptyState from "@/components/ui/EmptyState";
+
+export default function RecentApplications({ applications }) {
   return (
     <section className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">
-          Recent Applications
-        </h2>
-      </div>
-
-      <ApplicantsTable
-        applications={applications}
+      <SectionHeader
+        title="Recent Applications"
+        subtitle="Latest candidates who have applied."
       />
+
+      {!applications || applications.length === 0 ? (
+        <EmptyState
+          title="No Applications Yet"
+          subtitle="Applications will appear here once students start applying."
+        />
+      ) : (
+        <GlassCard>
+          <ApplicantsTable applications={applications} />
+        </GlassCard>
+      )}
     </section>
   );
 }

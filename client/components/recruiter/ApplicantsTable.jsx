@@ -2,106 +2,174 @@
 
 import { FaCheckCircle, FaTimesCircle, FaUserCheck } from "react-icons/fa";
 
-export default function ApplicantsTable({ applicants = [], updateStatus }) {
-  if (applicants.length === 0) {
-    return (
-      <div className="rounded-2xl border border-dashed border-gray-700 bg-gray-900 p-10 text-center">
-        <h2 className="text-2xl font-semibold text-white">No Applicants Yet</h2>
+import Badge from "@/components/ui/Badge";
+import EmptyState from "@/components/ui/EmptyState";
+import GlassCard from "@/components/ui/GlassCard";
 
-        <p className="mt-2 text-gray-400">
-          Students who apply for this job will appear here.
-        </p>
-      </div>
+export default function ApplicantsTable({ applicants = [], updateStatus }) {
+  if (!applicants || applicants.length === 0) {
+    return (
+      <EmptyState
+        title="No Applicants Yet"
+        subtitle="Students who apply for this job will appear here."
+      />
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900">
-      <table className="w-full">
-        <thead className="bg-gray-950">
-          <tr className="text-left text-gray-300">
-            <th className="p-5">Student</th>
+    <GlassCard className="p-0 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-white/10 bg-white/[0.02] text-left text-xs uppercase tracking-[0.18em] text-gray-400">
+              <th className="px-6 py-5">Student</th>
 
-            <th className="p-5">Email</th>
+              <th className="px-6 py-5">Email</th>
 
-            <th className="p-5">Status</th>
+              <th className="px-6 py-5">Status</th>
 
-            <th className="p-5">Applied</th>
+              <th className="px-6 py-5">Applied</th>
 
-            <th className="p-5 text-center">Actions</th>
-          </tr>
-        </thead>
+              <th className="px-6 py-5 text-center">Actions</th>
+            </tr>
+          </thead>
 
-        <tbody>
-          {applicants.map((app) => (
-            <tr
-              key={app._id}
-              className="border-t border-gray-800 hover:bg-gray-800/40 transition"
-            >
-              <td className="p-5 font-medium text-white">{app.student.name}</td>
+          <tbody>
+            {applicants.map((app) => (
+              <tr
+                key={app._id}
+                className="
+                  border-b
+                  border-white/5
+                  transition-all
+                  duration-300
+                  hover:bg-white/[0.03]
+                "
+              >
+                {/* Student */}
 
-              <td className="p-5 text-gray-400">{app.student.email}</td>
+                <td className="px-6 py-6">
+                  <div>
+                    <p className="font-semibold text-white">
+                      {app.student.name}
+                    </p>
 
-              <td className="p-5">
-                <span
-                  className={`rounded-full px-3 py-1 text-sm font-medium ${
-                    app.status === "Applied"
-                      ? "bg-blue-500/20 text-blue-400"
-                      : app.status === "Shortlisted"
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : app.status === "Selected"
-                          ? "bg-green-500/20 text-green-400"
-                          : "bg-red-500/20 text-red-400"
-                  }`}
-                >
-                  {app.status}
-                </span>
-              </td>
+                    <p className="mt-1 text-sm text-gray-500">Student</p>
+                  </div>
+                </td>
 
-              <td className="p-5 text-gray-400">
-                {new Date(app.createdAt).toLocaleDateString()}
-              </td>
+                {/* Email */}
 
-              <td className="p-5">
-                <div className="flex flex-wrap justify-center gap-2">
-                  <button
-                    onClick={() => updateStatus(app._id, "Shortlisted")}
-                    className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-yellow-400"
-                    title="Shortlist Candidate"
-                  >
-                    <div className="flex items-center gap-2">
+                <td className="px-6 text-gray-400">{app.student.email}</td>
+
+                {/* Status */}
+
+                <td className="px-6">
+                  {app.status === "Applied" && (
+                    <Badge variant="info">Applied</Badge>
+                  )}
+
+                  {app.status === "Shortlisted" && (
+                    <Badge variant="warning">Shortlisted</Badge>
+                  )}
+
+                  {app.status === "Selected" && (
+                    <Badge variant="success">Selected</Badge>
+                  )}
+
+                  {app.status === "Rejected" && (
+                    <Badge variant="danger">Rejected</Badge>
+                  )}
+                </td>
+
+                {/* Applied Date */}
+
+                <td className="px-6 text-gray-400">
+                  {new Date(app.createdAt).toLocaleDateString()}
+                </td>
+
+                {/* Actions */}
+
+                <td className="px-6">
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <button
+                      onClick={() => updateStatus(app._id, "Shortlisted")}
+                      className="
+                        flex
+                        items-center
+                        gap-2
+                        rounded-xl
+                        border
+                        border-yellow-500/30
+                        bg-yellow-500/10
+                        px-4
+                        py-2
+                        text-sm
+                        font-medium
+                        text-yellow-400
+                        transition-all
+                        duration-300
+                        hover:bg-yellow-500/20
+                      "
+                    >
                       <FaUserCheck />
                       Shortlist
-                    </div>
-                  </button>
+                    </button>
 
-                  <button
-                    onClick={() => updateStatus(app._id, "Selected")}
-                    className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
-                    title="Select Candidate"
-                  >
-                    <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => updateStatus(app._id, "Selected")}
+                      className="
+                        flex
+                        items-center
+                        gap-2
+                        rounded-xl
+                        border
+                        border-green-500/30
+                        bg-green-500/10
+                        px-4
+                        py-2
+                        text-sm
+                        font-medium
+                        text-green-400
+                        transition-all
+                        duration-300
+                        hover:bg-green-500/20
+                      "
+                    >
                       <FaCheckCircle />
                       Select
-                    </div>
-                  </button>
+                    </button>
 
-                  <button
-                    onClick={() => updateStatus(app._id, "Rejected")}
-                    className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
-                    title="Reject Candidate"
-                  >
-                    <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => updateStatus(app._id, "Rejected")}
+                      className="
+                        flex
+                        items-center
+                        gap-2
+                        rounded-xl
+                        border
+                        border-red-500/30
+                        bg-red-500/10
+                        px-4
+                        py-2
+                        text-sm
+                        font-medium
+                        text-red-400
+                        transition-all
+                        duration-300
+                        hover:bg-red-500/20
+                      "
+                    >
                       <FaTimesCircle />
                       Reject
-                    </div>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </GlassCard>
   );
 }

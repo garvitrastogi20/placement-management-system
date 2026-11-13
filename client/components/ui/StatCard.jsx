@@ -1,54 +1,68 @@
+"use client";
+
 import { motion } from "framer-motion";
+import GlassCard from "@/components/ui/GlassCard";
 
 export default function StatCard({
-    title,
-    value,
-    icon,
-    color,
-    subtitle,
+  title,
+  value,
+  icon,
+  color = "text-[#F4C27A]",
+  subtitle,
 }) {
-    return (
-        <motion.div
-            whileHover={{
-                y: -6,
-                scale: 1.02,
-            }}
-            transition={{
-                duration: 0.2,
-            }}
-            className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 shadow-xl"
-        >
-            {/* Background Glow */}
-            <div
-                className={`absolute -right-8 -top-8 h-24 w-24 rounded-full blur-3xl opacity-20 ${color}`}
-            />
+  return (
+    <motion.div
+      whileHover={{
+        y: -6,
+        scale: 1.02,
+      }}
+      transition={{
+        duration: 0.25,
+      }}
+    >
+      <GlassCard>
+        <div className="flex items-center justify-between gap-5">
+          {/* Content */}
 
-            <div className="flex justify-between items-center">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+              {title}
+            </p>
 
-                <div>
+            <h2 className="mt-3 text-4xl font-extrabold text-white sm:text-5xl">
+              {value}
+            </h2>
 
-                    <p className="text-gray-400 text-sm">
-                        {title}
-                    </p>
+            {subtitle && (
+              <p className="mt-2 text-sm text-gray-500">{subtitle}</p>
+            )}
+          </div>
 
-                    <h2 className="text-4xl font-bold mt-2">
-                        {value}
-                    </h2>
+          {/* Icon */}
 
-                    <p className="text-gray-500 text-sm mt-2">
-                        {subtitle}
-                    </p>
-
-                </div>
-
-                <div
-                    className={`text-5xl ${color}`}
-                >
-                    {icon}
-                </div>
-
-            </div>
-
-        </motion.div>
-    );
+          <div
+            className={`
+              flex
+              h-14
+              w-14
+              shrink-0
+              items-center
+              justify-center
+              rounded-2xl
+              border
+              border-[#C97B3C]/20
+              bg-gradient-to-br
+              from-[#C97B3C]/20
+              to-[#F4C27A]/10
+              text-2xl
+              shadow-[0_8px_25px_rgba(201,123,60,.08)]
+              ${color}
+            `}
+          >
+            {icon}
+          </div>
+        </div>
+      </GlassCard>
+    </motion.div>
+  );
 }

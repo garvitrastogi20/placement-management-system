@@ -1,19 +1,11 @@
 "use client";
 
 export default function PageContainer({ children }) {
-
-    return (
-
-        <main className="ml-72 min-h-screen bg-slate-950">
-
-            <div className="mx-auto max-w-7xl px-10 py-8">
-
-                {children}
-
-            </div>
-
-        </main>
-
-    );
-
+  return (
+    <div className="w-full">
+      <div className="mx-auto w-full max-w-[1550px] px-8 py-8 lg:px-10">
+        {children}
+      </div>
+    </div>
+  );
 }

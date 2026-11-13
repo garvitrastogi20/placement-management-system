@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import {
-  FaPlusCircle,
-  FaBriefcase,
-  FaUsers,
-  FaChartBar,
-} from "react-icons/fa";
+import { FaPlusCircle, FaBriefcase, FaUsers, FaChartBar } from "react-icons/fa";
+
+import GlassCard from "@/components/ui/GlassCard";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 const actions = [
   {
@@ -14,59 +12,100 @@ const actions = [
     description: "Post a new job opening",
     href: "/recruiter/create-job",
     icon: <FaPlusCircle />,
-    color: "from-blue-500 to-indigo-600",
+    color: "text-[#C97B3C]",
   },
   {
     title: "Manage Jobs",
     description: "View and edit posted jobs",
     href: "/recruiter/jobs",
     icon: <FaBriefcase />,
-    color: "from-green-500 to-emerald-600",
+    color: "text-green-400",
   },
   {
     title: "Applicants",
     description: "Review job applicants",
     href: "/recruiter/applicants",
     icon: <FaUsers />,
-    color: "from-purple-500 to-pink-600",
+    color: "text-purple-400",
   },
   {
     title: "Analytics",
     description: "View hiring insights",
     href: "/recruiter/analytics",
     icon: <FaChartBar />,
-    color: "from-orange-500 to-red-500",
+    color: "text-orange-400",
   },
 ];
 
 export default function QuickActions() {
   return (
     <section className="space-y-6">
-      <h2 className="text-2xl font-bold text-white">
-        Quick Actions
-      </h2>
+      <SectionHeader
+        title="Quick Actions"
+        subtitle="Navigate quickly to your most frequently used recruiter tools."
+      />
 
       <div className="grid gap-6 sm:grid-cols-2">
         {actions.map((action) => (
-          <Link
-            key={action.title}
-            href={action.href}
-            className="group rounded-2xl border border-white/10 bg-slate-900/70 p-6 backdrop-blur-lg transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl"
-          >
-            <div
-              className={`mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${action.color} text-2xl text-white`}
+          <GlassCard key={action.title} className="p-0 h-full">
+            <Link
+              href={action.href}
+              className="
+                group
+                flex
+                h-full
+                flex-col
+                p-6
+              "
             >
-              {action.icon}
-            </div>
+              <div
+                className={`
+                  mb-5
+                  flex
+                  h-16
+                  w-16
+                  items-center
+                  justify-center
+                  rounded-2xl
+                  border
+                  border-[#C97B3C]/20
+                  bg-gradient-to-br
+                  from-[#C97B3C]/20
+                  to-[#F4C27A]/10
+                  text-3xl
+                  ${action.color}
+                  transition-all
+                  duration-500
+                  group-hover:scale-110
+                  group-hover:rotate-6
+                `}
+              >
+                {action.icon}
+              </div>
 
-            <h3 className="text-lg font-semibold text-white">
-              {action.title}
-            </h3>
+              <h3 className="text-xl font-bold text-white">{action.title}</h3>
 
-            <p className="mt-2 text-sm text-gray-400">
-              {action.description}
-            </p>
-          </Link>
+              <p className="mt-3 text-gray-400 leading-7">
+                {action.description}
+              </p>
+
+              <div className="mt-auto pt-6">
+                <span
+                  className="
+                    text-sm
+                    font-semibold
+                    text-[#C97B3C]
+                    transition-all
+                    duration-300
+                    group-hover:translate-x-2
+                    inline-block
+                  "
+                >
+                  Open →
+                </span>
+              </div>
+            </Link>
+          </GlassCard>
         ))}
       </div>
     </section>
