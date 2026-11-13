@@ -29,19 +29,26 @@ export default function ApplicantFilters({
             w-full
             rounded-2xl
             border
-            border-white/10
-            bg-white/[0.04]
+            border-slate-200
+            bg-white
             py-4
             pl-14
             pr-5
-            text-white
+            text-slate-900
+            shadow-sm
             outline-none
             transition-all
             duration-300
-            placeholder:text-gray-500
-            focus:border-[#C97B3C]
+            placeholder:text-slate-400
+            focus:border-blue-500
             focus:ring-2
-            focus:ring-[#C97B3C]/30
+            focus:ring-blue-500/20
+            dark:border-white/10
+            dark:bg-white/[0.04]
+            dark:text-white
+            dark:placeholder:text-gray-500
+            dark:focus:border-[#C97B3C]
+            dark:focus:ring-[#C97B3C]/30
           "
         />
       </div>
@@ -76,11 +83,17 @@ export default function ApplicantFilters({
                     `
                     : `
                       border
-                      border-white/10
-                      bg-white/[0.04]
-                      text-gray-400
-                      hover:border-[#C97B3C]/40
-                      hover:text-[#F4C27A]
+                      border-slate-200
+                      bg-white
+                      text-slate-600
+                      shadow-sm
+                      hover:border-blue-400
+                      hover:text-blue-600
+                      dark:border-white/10
+                      dark:bg-white/[0.04]
+                      dark:text-gray-400
+                      dark:hover:border-[#C97B3C]/40
+                      dark:hover:text-[#F4C27A]
                     `
                 }
               `}

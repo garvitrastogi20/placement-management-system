@@ -75,6 +75,40 @@ const sanitizeStringArray = (value) => {
 const escapeRegex = (value) =>
   String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+const parsePagination = (query, defaultLimit = 10, maxLimit = 50) => {
+  let page = parseInt(query?.page, 10);
+  if (Number.isNaN(page) || page < 1) {
+    page = 1;
+  }
+
+  let limit = parseInt(query?.limit, 10);
+  if (Number.isNaN(limit) || limit < 1) {
+    limit = defaultLimit;
+  } else if (limit > maxLimit) {
+    limit = maxLimit;
+  }
+
+  const skip = (page - 1) * limit;
+
+  return { page, limit, skip };
+};
+
+const formatPaginationResponse = ({ data, totalRecords, page, limit }) => {
+  const totalPages = Math.ceil(totalRecords / limit) || 0;
+  return {
+    success: true,
+    data,
+    pagination: {
+      currentPage: page,
+      totalPages,
+      totalRecords,
+      limit,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+    },
+  };
+};
+
 module.exports = {
   isValidObjectId,
   normalizeEmail,
@@ -83,4 +117,6 @@ module.exports = {
   parseOptionalNumber,
   sanitizeStringArray,
   escapeRegex,
+  parsePagination,
+  formatPaginationResponse,
 };

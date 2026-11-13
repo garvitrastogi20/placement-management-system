@@ -37,9 +37,9 @@ const stats = [
 
 export default function Stats() {
     return (
-        <section className="bg-gray-950 py-24">
+        <section className="py-24 bg-transparent">
 
-            <div className="max-w-7xl mx-auto px-8">
+            <div className="max-w-7xl mx-auto px-6 sm:px-8">
 
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -48,12 +48,12 @@ export default function Stats() {
                     transition={{ duration: 0.8 }}
                 >
 
-                    <h2 className="text-4xl font-bold text-center mb-4">
+                    <h2 className="text-3xl sm:text-5xl font-bold text-center mb-4 text-slate-900 dark:text-white">
                         Trusted by Thousands
                     </h2>
 
-                    <p className="text-center text-gray-400 mb-14 text-lg">
-                        Connecting talented students with leading recruiters.
+                    <p className="text-center text-slate-600 dark:text-gray-400 mb-14 text-base sm:text-lg">
+                        Connecting ambitious students with leading national and global employers.
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -63,26 +63,26 @@ export default function Stats() {
                             <motion.div
                                 key={index}
                                 whileHover={{
-                                    scale: 1.05,
-                                    y: -8,
+                                    scale: 1.04,
+                                    y: -6,
                                 }}
                                 transition={{
                                     duration: 0.25,
                                 }}
-                                className="bg-gray-900 border border-gray-800 rounded-3xl p-8 text-center shadow-xl"
+                                className="rounded-3xl border border-slate-200 bg-white/90 p-8 text-center shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-gray-900/90 dark:shadow-xl"
                             >
 
                                 <div
-                                    className={`text-5xl mb-5 ${item.color}`}
+                                    className={`text-4xl mb-4 ${item.color}`}
                                 >
                                     {item.icon}
                                 </div>
 
-                                <h3 className="text-4xl font-extrabold">
+                                <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
                                     {item.number}
                                 </h3>
 
-                                <p className="text-gray-400 mt-3 text-lg">
+                                <p className="text-slate-600 dark:text-gray-400 mt-2 text-base sm:text-lg">
                                     {item.title}
                                 </p>
 

@@ -88,6 +88,17 @@ app.use(
 app.use(express.json({ limit: "1mb" }));
 app.use(logger);
 
+const healthHandler = (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+};
+
+app.get("/health", healthHandler);
+app.get("/api/health", healthHandler);
+
 app.use("/api/jobs", jobRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/student", studentRoutes);

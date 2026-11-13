@@ -57,9 +57,9 @@ const features = [
 
 export default function Features() {
     return (
-        <section className="bg-black py-24">
+        <section className="py-24 bg-transparent">
 
-            <div className="max-w-7xl mx-auto px-8">
+            <div className="max-w-7xl mx-auto px-6 sm:px-8">
 
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -68,12 +68,12 @@ export default function Features() {
                     transition={{ duration: 0.8 }}
                 >
 
-                    <h2 className="text-5xl font-bold text-center mb-5">
+                    <h2 className="text-3xl sm:text-5xl font-bold text-center mb-4 text-slate-900 dark:text-white">
                         Powerful Features
                     </h2>
 
-                    <p className="text-center text-gray-400 text-lg mb-16">
-                        Everything you need to simplify campus placements.
+                    <p className="text-center text-slate-600 dark:text-gray-400 text-base sm:text-lg mb-16 max-w-2xl mx-auto">
+                        Everything you need to simplify and accelerate campus recruitment.
                     </p>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -83,26 +83,26 @@ export default function Features() {
                             <motion.div
                                 key={index}
                                 whileHover={{
-                                    scale: 1.05,
-                                    y: -10,
+                                    scale: 1.03,
+                                    y: -6,
                                 }}
                                 transition={{
                                     duration: 0.25,
                                 }}
-                                className="bg-gray-900 border border-gray-800 rounded-3xl p-8"
+                                className="rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-sm backdrop-blur-xl transition hover:shadow-md dark:border-white/10 dark:bg-gray-900/90 dark:hover:border-white/20"
                             >
 
                                 <div
-                                    className={`text-5xl mb-6 ${feature.color}`}
+                                    className={`text-4xl mb-5 ${feature.color}`}
                                 >
                                     {feature.icon}
                                 </div>
 
-                                <h3 className="text-2xl font-bold mb-4">
+                                <h3 className="text-xl sm:text-2xl font-bold mb-3 text-slate-900 dark:text-white">
                                     {feature.title}
                                 </h3>
 
-                                <p className="text-gray-400 leading-7">
+                                <p className="text-slate-600 dark:text-gray-400 leading-relaxed text-sm sm:text-base">
                                     {feature.description}
                                 </p>
 

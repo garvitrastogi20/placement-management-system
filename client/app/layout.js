@@ -23,9 +23,28 @@ export default function RootLayout({
     return (
         <html
             lang="en"
-            className={`${geistSans.variable} ${geistMono.variable}`}
+            className={`${geistSans.variable} ${geistMono.variable} dark`}
+            suppressHydrationWarning
         >
-            <body className="bg-gray-950">
+            <head>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                            try {
+                                const storedTheme = localStorage.getItem('theme');
+                                if (storedTheme === 'light') {
+                                    document.documentElement.classList.remove('dark');
+                                    document.documentElement.classList.add('light');
+                                } else {
+                                    document.documentElement.classList.remove('light');
+                                    document.documentElement.classList.add('dark');
+                                }
+                            } catch (e) {}
+                        `,
+                    }}
+                />
+            </head>
+            <body className="min-h-screen bg-[#09090B] text-white transition-colors duration-200">
 
                 {children}
 

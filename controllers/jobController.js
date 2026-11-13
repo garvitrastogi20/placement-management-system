@@ -5,6 +5,8 @@ const {
   parseOptionalNumber,
   sanitizeStringArray,
   escapeRegex,
+  parsePagination,
+  formatPaginationResponse,
 } = require("../utils/validation");
 
 // In-process lock prevents concurrent double-submissions for the same (student, job) pair
@@ -211,32 +213,47 @@ const getAllJobs = async (req, res) => {
       filter.skillsRequired = new RegExp(`^${escapeRegex(skill.trim())}$`, "i");
     }
 
-    const jobs = await Job.find(filter).populate("recruiter", "name email");
+    const { page, limit, skip } = parsePagination(req.query, 10, 50);
 
-    // If the user is not logged in, just return the jobs
-    if (!req.user) {
-      return res.status(200).json(jobs);
-    }
+    const [totalRecords, jobs] = await Promise.all([
+      Job.countDocuments(filter),
+      Job.find(filter)
+        .populate("recruiter", "name email")
+        .sort({ createdAt: -1, _id: -1 })
+        .skip(skip)
+        .limit(limit),
+    ]);
 
-    // If the logged-in user is a student, mark applied jobs
-    if (req.user.role === "student") {
+    let finalJobs = jobs;
+
+    // If the logged-in user is a student, mark applied jobs for the current page only
+    if (req.user?.role === "student" && jobs.length > 0) {
+      const pageJobIds = jobs.map((j) => j._id);
       const applications = await Application.find({
         student: req.user.id,
-      });
+        job: { $in: pageJobIds },
+      }).select("job");
 
       const appliedJobIds = new Set(
         applications.map((app) => app.job.toString()),
       );
 
-      const jobsWithStatus = jobs.map((job) => ({
+      finalJobs = jobs.map((job) => ({
         ...job.toObject(),
         isApplied: appliedJobIds.has(job._id.toString()),
       }));
-
-      return res.status(200).json(jobsWithStatus);
+    } else {
+      finalJobs = jobs.map((job) => (job.toObject ? job.toObject() : job));
     }
 
-    res.status(200).json(jobs);
+    return res.status(200).json(
+      formatPaginationResponse({
+        data: finalJobs,
+        totalRecords,
+        page,
+        limit,
+      }),
+    );
   } catch (error) {
     console.error("Get All Jobs Error:", error);
     res.status(500).json({
@@ -291,13 +308,29 @@ const getJobById = async (req, res) => {
 
 const getMyApplications = async (req, res) => {
   try {
-    const applications = await Application.find({
-      student: req.user.id,
-    })
-      .populate("job", "title company location package deadline")
-      .sort({ createdAt: -1 });
+    const { page, limit, skip } = parsePagination(req.query, 10, 50);
 
-    res.status(200).json(applications);
+    const filter = {
+      student: req.user.id,
+    };
+
+    const [totalRecords, applications] = await Promise.all([
+      Application.countDocuments(filter),
+      Application.find(filter)
+        .populate("job", "title company location package deadline")
+        .sort({ createdAt: -1, _id: -1 })
+        .skip(skip)
+        .limit(limit),
+    ]);
+
+    return res.status(200).json(
+      formatPaginationResponse({
+        data: applications,
+        totalRecords,
+        page,
+        limit,
+      }),
+    );
   } catch (error) {
     console.error("Get My Applications Error:", error);
     res.status(500).json({

@@ -3,9 +3,10 @@ import api from "./api";
 // ==============================
 // Get All Applicants
 // ==============================
-export const getApplicants = async () => {
+export const getApplicants = async (params = {}) => {
   try {
     const response = await api.get("/recruiter/applicants", {
+      params,
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

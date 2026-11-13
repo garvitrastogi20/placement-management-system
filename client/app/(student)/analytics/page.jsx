@@ -13,12 +13,12 @@ const STATUS_STYLES = {
 
 function StatCard({ label, value, description, icon, color }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#11100f] p-5 transition hover:border-white/20">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 dark:border-white/10 dark:bg-[#11100f] dark:hover:border-white/20">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm text-gray-400">{label}</p>
-          <p className="mt-3 text-3xl font-bold text-white">{value}</p>
-          <p className="mt-2 text-xs text-gray-500">{description}</p>
+          <p className="text-sm text-slate-500 dark:text-gray-400">{label}</p>
+          <p className="mt-3 text-3xl font-bold text-slate-900 dark:text-white">{value}</p>
+          <p className="mt-2 text-xs text-slate-400 dark:text-gray-500">{description}</p>
         </div>
 
         <div
@@ -52,6 +52,7 @@ export default function StudentAnalyticsPage() {
         }
 
         const response = await api.get("/jobs/my-applications", {
+          params: { limit: 50 },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -237,30 +238,30 @@ export default function StudentAnalyticsPage() {
 
           {/* Status breakdown and placement overview */}
           <div className="mt-6 grid gap-6 xl:grid-cols-5">
-            <section className="rounded-2xl border border-white/10 bg-[#11100f] p-6 xl:col-span-3">
-              <h2 className="text-lg font-semibold text-white">
+            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-[#11100f] xl:col-span-3">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                 Application Status
               </h2>
 
-              <p className="mt-1 text-sm text-gray-400">
+              <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">
                 Breakdown of your current applications.
               </p>
 
               {total === 0 ? (
-                <div className="mt-6 rounded-xl border border-dashed border-white/10 p-8 text-center">
+                <div className="mt-6 rounded-xl border border-dashed border-slate-300 dark:border-white/10 p-8 text-center">
                   <div className="text-3xl">▤</div>
 
-                  <p className="mt-3 font-medium text-white">
+                  <p className="mt-3 font-medium text-slate-900 dark:text-white">
                     No applications yet
                   </p>
 
-                  <p className="mt-2 text-sm text-gray-400">
+                  <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">
                     Apply for jobs to start tracking your progress here.
                   </p>
 
                   <Link
                     href="/jobs"
-                    className="mt-5 inline-flex rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
+                    className="mt-5 inline-flex rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
                   >
                     Explore jobs
                   </Link>
@@ -273,14 +274,14 @@ export default function StudentAnalyticsPage() {
                     return (
                       <div key={row.label}>
                         <div className="mb-2 flex items-center justify-between gap-3 text-sm">
-                          <span className="text-gray-300">{row.label}</span>
+                          <span className="text-slate-700 dark:text-gray-300">{row.label}</span>
 
-                          <span className="text-gray-400">
+                          <span className="text-slate-500 dark:text-gray-400">
                             {row.count} ({percentage}%)
                           </span>
                         </div>
 
-                        <div className="h-2 overflow-hidden rounded-full bg-white/5">
+                        <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-white/5">
                           <div
                             className={`h-full rounded-full transition-all duration-500 ${row.color}`}
                             style={{ width: `${percentage}%` }}
@@ -293,42 +294,42 @@ export default function StudentAnalyticsPage() {
               )}
             </section>
 
-            <section className="rounded-2xl border border-white/10 bg-[#11100f] p-6 xl:col-span-2">
-              <h2 className="text-lg font-semibold text-white">
+            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-[#11100f] xl:col-span-2">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                 Placement Overview
               </h2>
 
-              <p className="mt-1 text-sm text-gray-400">
+              <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">
                 Your current placement progress.
               </p>
 
-              <div className="mt-6 rounded-xl bg-white/[0.03] p-5">
-                <p className="text-sm text-gray-400">Shortlist rate</p>
+              <div className="mt-6 rounded-xl border border-slate-100 bg-slate-50 p-5 dark:border-transparent dark:bg-white/[0.03]">
+                <p className="text-sm text-slate-600 dark:text-gray-400">Shortlist rate</p>
 
-                <p className="mt-2 text-3xl font-bold text-purple-300">
+                <p className="mt-2 text-3xl font-bold text-purple-600 dark:text-purple-300">
                   {shortlistRate}%
                 </p>
 
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-slate-400 dark:text-gray-500">
                   Percentage of applications shortlisted.
                 </p>
               </div>
 
-              <div className="mt-4 rounded-xl bg-white/[0.03] p-5">
-                <p className="text-sm text-gray-400">Selection rate</p>
+              <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-5 dark:border-transparent dark:bg-white/[0.03]">
+                <p className="text-sm text-slate-600 dark:text-gray-400">Selection rate</p>
 
-                <p className="mt-2 text-3xl font-bold text-emerald-300">
+                <p className="mt-2 text-3xl font-bold text-emerald-600 dark:text-emerald-300">
                   {selectionRate}%
                 </p>
 
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-slate-400 dark:text-gray-500">
                   Percentage of applications resulting in selection.
                 </p>
               </div>
 
               <Link
                 href="/my-applications"
-                className="mt-5 flex w-full items-center justify-center rounded-xl border border-white/10 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/5"
+                className="mt-5 flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-white/10 dark:bg-transparent dark:text-white dark:hover:bg-white/5"
               >
                 View all applications →
               </Link>
@@ -336,21 +337,21 @@ export default function StudentAnalyticsPage() {
           </div>
 
           {/* Recent applications */}
-          <section className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-[#11100f]">
-            <div className="flex items-center justify-between gap-4 border-b border-white/10 p-6">
+          <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#11100f]">
+            <div className="flex items-center justify-between gap-4 border-b border-slate-100 p-6 dark:border-white/10">
               <div>
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Recent Applications
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-400">
+                <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">
                   Your latest application activity.
                 </p>
               </div>
 
               <Link
                 href="/my-applications"
-                className="text-sm font-medium text-blue-400 hover:text-blue-300"
+                className="text-sm font-semibold text-blue-600 hover:underline dark:text-blue-400"
               >
                 View all
               </Link>
@@ -358,19 +359,19 @@ export default function StudentAnalyticsPage() {
 
             {recentApplications.length === 0 ? (
               <div className="p-8 text-center">
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-slate-500 dark:text-gray-400">
                   Your recent applications will appear here.
                 </p>
 
                 <Link
                   href="/jobs"
-                  className="mt-4 inline-block text-sm font-medium text-blue-400 hover:text-blue-300"
+                  className="mt-4 inline-block text-sm font-semibold text-blue-600 hover:underline dark:text-blue-400"
                 >
                   Browse available jobs →
                 </Link>
               </div>
             ) : (
-              <div className="divide-y divide-white/5">
+              <div className="divide-y divide-slate-100 dark:divide-white/5">
                 {recentApplications.map((application, index) => {
                   const job = application.job || {};
                   const status = getStatus(application);
@@ -387,15 +388,15 @@ export default function StudentAnalyticsPage() {
                       className="flex flex-col justify-between gap-3 p-5 sm:flex-row sm:items-center"
                     >
                       <div>
-                        <p className="font-medium text-white">
+                        <p className="font-semibold text-slate-900 dark:text-white">
                           {job.title || "Job application"}
                         </p>
 
-                        <p className="mt-1 text-sm text-gray-400">
+                        <p className="mt-1 text-sm text-slate-600 dark:text-gray-400">
                           {job.company || "Company not available"}
                         </p>
 
-                        <p className="mt-1 text-xs text-gray-500">
+                        <p className="mt-1 text-xs text-slate-400 dark:text-gray-500">
                           {appliedDate
                             ? new Date(appliedDate).toLocaleDateString("en-IN")
                             : "Date unavailable"}
@@ -404,7 +405,7 @@ export default function StudentAnalyticsPage() {
 
                       <span
                         className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${
-                          STATUS_STYLES[status] || "bg-white/5 text-gray-300"
+                          STATUS_STYLES[status] || "bg-slate-100 text-slate-700 dark:bg-white/5 dark:text-gray-300"
                         }`}
                       >
                         {statusLabel}

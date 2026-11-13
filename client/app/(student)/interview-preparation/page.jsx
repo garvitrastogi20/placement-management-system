@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 
 import PageContainer from "@/components/layout/PageContainer";
-import Navbar from "@/components/layout/Navbar";
 import api from "@/services/api";
 
 export default function InterviewPreparationPage() {
@@ -29,7 +28,12 @@ export default function InterviewPreparationPage() {
     const fetchJobs = async () => {
       try {
         const response = await api.get("/jobs");
-        setJobs(response.data || []);
+        const jobsList = Array.isArray(response.data)
+          ? response.data
+          : Array.isArray(response.data?.data)
+            ? response.data.data
+            : [];
+        setJobs(jobsList);
       } catch (err) {
         setError(
           err.response?.data?.message || "Unable to load available jobs.",
@@ -163,38 +167,36 @@ export default function InterviewPreparationPage() {
 
   return (
     <PageContainer>
-      <Navbar />
-
-      <div className="mx-auto mt-8 max-w-5xl space-y-8">
+      <div className="mx-auto max-w-5xl space-y-8">
         {/* Header */}
         <div>
-          <p className="text-sm font-semibold uppercase tracking-widest text-blue-400">
+          <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 dark:text-[#C97B3C]">
             AI Career Preparation
           </p>
 
-          <h1 className="mt-2 text-4xl font-bold text-white">
+          <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
             Interview Preparation
           </h1>
 
-          <p className="mt-3 max-w-2xl text-gray-400">
+          <p className="mt-2 max-w-2xl text-sm sm:text-base text-slate-600 dark:text-gray-400">
             Generate personalized interview questions using your resume and the
             job you&apos;re targeting.
           </p>
         </div>
 
         {/* Job Selection */}
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
           <label
             htmlFor="job"
-            className="mb-3 block text-sm font-medium text-gray-300"
+            className="mb-3 block text-sm font-medium text-slate-700 dark:text-gray-300"
           >
             Select a job
           </label>
 
           {loadingJobs ? (
-            <p className="text-gray-400">Loading available jobs...</p>
+            <p className="text-slate-500 dark:text-gray-400">Loading available jobs...</p>
           ) : jobs.length === 0 ? (
-            <p className="text-gray-400">No jobs are currently available.</p>
+            <p className="text-slate-500 dark:text-gray-400">No jobs are currently available.</p>
           ) : (
             <div className="flex flex-col gap-4 sm:flex-row">
               <select
@@ -206,7 +208,7 @@ export default function InterviewPreparationPage() {
                   setViewingSessionId("");
                   setError("");
                 }}
-                className="min-w-0 flex-1 rounded-xl border border-white/10 bg-[#111827] p-3 text-white outline-none focus:border-blue-500"
+                className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white p-3 text-slate-900 outline-none focus:border-blue-500 shadow-sm dark:border-white/10 dark:bg-[#111827] dark:text-white"
               >
                 <option value="">Choose a job...</option>
 

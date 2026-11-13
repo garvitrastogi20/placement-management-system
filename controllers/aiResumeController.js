@@ -203,7 +203,7 @@ RULES:
 
     // Call Gemini
     const ai = getGeminiClient();
-    const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
     console.log("Starting resume analysis:", {
       jobId: String(job._id),

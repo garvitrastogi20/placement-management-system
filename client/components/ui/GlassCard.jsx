@@ -14,11 +14,18 @@ export default function GlassCard({ children, className = "" }) {
       className={`
         rounded-3xl
         border
-        border-[#C97B3C]/20
-        bg-[#11100F]
+        border-slate-200/80
+        bg-white/90
+        text-slate-900
         p-6
-        shadow-[0_15px_50px_rgba(0,0,0,0.25)]
+        shadow-[0_10px_30px_rgba(0,0,0,0.06)]
         backdrop-blur-xl
+        transition-colors
+        duration-200
+        dark:border-[#C97B3C]/20
+        dark:bg-[#11100F]
+        dark:text-white
+        dark:shadow-[0_15px_50px_rgba(0,0,0,0.25)]
         sm:p-7
         ${className}
       `}

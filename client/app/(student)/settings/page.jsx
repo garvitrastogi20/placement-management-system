@@ -131,12 +131,12 @@ export default function StudentSettingsPage() {
   };
 
   const inputClass =
-    "mt-2 w-full rounded-xl border border-white/10 bg-[#0c0b0a] px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-600 focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/10";
+    "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-white/10 dark:bg-[#0c0b0a] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-amber-400/60 dark:focus:ring-amber-400/10";
 
   if (loading) {
     return (
       <div className="mx-auto max-w-5xl px-5 py-8 sm:px-8">
-        <div className="rounded-2xl border border-white/10 bg-[#11100f] p-10 text-center text-gray-400">
+        <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-slate-500 shadow-sm dark:border-white/10 dark:bg-[#11100f] dark:text-gray-400">
           Loading account settings...
         </div>
       </div>
@@ -144,36 +144,36 @@ export default function StudentSettingsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8">
+    <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 py-6 sm:py-8">
       <div className="mb-8">
-        <p className="mb-2 text-sm font-medium text-amber-400">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-blue-600 dark:text-amber-400">
           STUDENT PORTAL / SETTINGS
         </p>
 
-        <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
           Settings
         </h1>
 
-        <p className="mt-2 text-gray-400">
+        <p className="mt-2 text-sm sm:text-base text-slate-600 dark:text-gray-400">
           Manage your account details, password, and session.
         </p>
       </div>
 
       <div className="space-y-6">
-        <section className="rounded-2xl border border-white/10 bg-[#11100f] p-6 sm:p-8">
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm dark:border-white/10 dark:bg-[#11100f]">
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
               Account information
             </h2>
 
-            <p className="mt-1 text-sm text-gray-400">
+            <p className="mt-1 text-sm text-slate-600 dark:text-gray-400">
               Update your basic student account details.
             </p>
           </div>
 
           <form onSubmit={handleSave} className="space-y-5">
             <div>
-              <label className="text-sm font-medium text-gray-300">
+              <label className="text-sm font-medium text-slate-700 dark:text-gray-300">
                 Full name
               </label>
 
@@ -192,7 +192,7 @@ export default function StudentSettingsPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-300">
+              <label className="text-sm font-medium text-slate-700 dark:text-gray-300">
                 Email address
               </label>
 
@@ -221,20 +221,20 @@ export default function StudentSettingsPage() {
           </form>
         </section>
 
-        <section className="rounded-2xl border border-white/10 bg-[#11100f] p-6 sm:p-8">
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm dark:border-white/10 dark:bg-[#11100f]">
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
               Change password
             </h2>
 
-            <p className="mt-1 text-sm text-gray-400">
+            <p className="mt-1 text-sm text-slate-600 dark:text-gray-400">
               Choose a strong password with at least 8 characters.
             </p>
           </div>
 
           <form onSubmit={handleChangePassword} className="space-y-5">
             <div>
-              <label className="text-sm font-medium text-gray-300">
+              <label className="text-sm font-medium text-slate-700 dark:text-gray-300">
                 Current password
               </label>
 
@@ -249,7 +249,7 @@ export default function StudentSettingsPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-300">
+              <label className="text-sm font-medium text-slate-700 dark:text-gray-300">
                 New password
               </label>
 
@@ -265,7 +265,7 @@ export default function StudentSettingsPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-300">
+              <label className="text-sm font-medium text-slate-700 dark:text-gray-300">
                 Confirm new password
               </label>
 
@@ -293,16 +293,16 @@ export default function StudentSettingsPage() {
         </section>
 
         <section className="rounded-2xl border border-red-500/20 bg-red-500/[0.03] p-6 sm:p-8">
-          <h2 className="text-lg font-semibold text-white">Sign out</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Sign out</h2>
 
-          <p className="mt-2 text-sm text-gray-400">
+          <p className="mt-2 text-sm text-slate-600 dark:text-gray-400">
             Sign out of your current session on this browser.
           </p>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="mt-5 rounded-xl border border-red-500/30 px-5 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-500/10"
+            className="mt-5 rounded-xl border border-red-500/30 px-5 py-3 text-sm font-semibold text-red-600 dark:text-red-300 transition hover:bg-red-500/10"
           >
             Log out
           </button>

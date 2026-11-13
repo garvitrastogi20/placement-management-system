@@ -99,11 +99,11 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#090807] text-white">
+      <div className="flex min-h-[60vh] items-center justify-center text-slate-900 dark:text-white">
         <div className="text-center">
-          <div className="mx-auto mb-5 h-12 w-12 animate-spin rounded-full border-4 border-[#C97B3C]/20 border-t-[#F4C27A]" />
+          <div className="mx-auto mb-5 h-12 w-12 animate-spin rounded-full border-4 border-blue-500/20 border-t-blue-600 dark:border-[#C97B3C]/20 dark:border-t-[#F4C27A]" />
 
-          <p className="text-gray-400">Loading your dashboard...</p>
+          <p className="text-sm font-medium text-slate-500 dark:text-gray-400">Loading your dashboard...</p>
         </div>
       </div>
     );

@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import Logo from "../common/Logo";
+import ThemeToggle from "../common/ThemeToggle";
 
 import {
   FaHome,
@@ -17,12 +18,15 @@ import {
   FaCog,
   FaSignOutAlt,
   FaCamera,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
 
 export default function RecruiterSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState({
     name: "",
     role: "",
@@ -31,8 +35,16 @@ export default function RecruiterSidebar() {
 
   // Load recruiter information
   useEffect(() => {
+    const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
+    // Require authentication
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
+
+    // Prevent non-recruiters from accessing recruiter pages
     if (role !== "recruiter") {
       router.replace("/dashboard");
       return;
@@ -61,6 +73,11 @@ export default function RecruiterSidebar() {
       window.removeEventListener("profileUpdated", handleProfileUpdate);
     };
   }, []);
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   const menu = [
     {
@@ -116,30 +133,70 @@ export default function RecruiterSidebar() {
   };
 
   return (
-    <aside
-      className="
-        fixed
-        left-0
-        top-0
-        h-screen
-        w-72
-        border-r
-        border-[#C97B3C]/10
-        bg-gradient-to-b
-        from-[#14110F]
-        via-[#0F0F10]
-        to-[#09090B]
-        backdrop-blur-2xl
-      "
-    >
-      <div className="flex h-full flex-col">
-        {/* =====================================================
-            LOGO
-        ====================================================== */}
-
-        <div className="border-b border-[#C97B3C]/10 p-7">
+    <>
+      {/* Mobile Top Header */}
+      <div className="fixed top-0 left-0 right-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur-md dark:border-[#C97B3C]/15 dark:bg-[#090807]/95 lg:hidden">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle Recruiter Menu"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-slate-700 transition dark:border-white/10 dark:bg-white/5 dark:text-gray-300"
+          >
+            {mobileOpen ? <FaTimes size={18} /> : <FaBars size={18} />}
+          </button>
           <Logo />
         </div>
+
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+        </div>
+      </div>
+
+      {/* Mobile Backdrop Overlay */}
+      {mobileOpen && (
+        <div
+          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+        />
+      )}
+
+      {/* Main Recruiter Sidebar */}
+      <aside
+        className={`
+          fixed
+          left-0
+          top-0
+          z-40
+          h-screen
+          w-72
+          border-r
+          border-slate-200
+          bg-white
+          text-slate-900
+          transition-transform
+          duration-300
+          dark:border-[#C97B3C]/10
+          dark:bg-gradient-to-b
+          dark:from-[#14110F]
+          dark:via-[#0F0F10]
+          dark:to-[#09090B]
+          dark:text-white
+          backdrop-blur-2xl
+          ${mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"}
+        `}
+      >
+        <div className="flex h-full flex-col">
+          {/* =====================================================
+              LOGO
+          ====================================================== */}
+
+          <div className="border-b border-slate-200 p-6 dark:border-[#C97B3C]/10 sm:p-7 flex items-center justify-between">
+            <Logo />
+            <div className="hidden lg:block">
+              <ThemeToggle />
+            </div>
+          </div>
 
         {/* =====================================================
             NAVIGATION
@@ -380,5 +437,6 @@ export default function RecruiterSidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }

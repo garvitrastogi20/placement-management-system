@@ -161,7 +161,7 @@ Generate:
 `;
 
     const result = await ai.models.generateContent({
-      model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
+      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
       contents: [
         { text: prompt },
         {

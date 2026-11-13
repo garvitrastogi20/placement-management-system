@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 
 import PageContainer from "@/components/ui/PageContainer";
 import HeroBanner from "@/components/ui/HeroBanner";
@@ -23,28 +23,63 @@ export default function ApplicantsPage() {
 
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalRecords: 0,
+    limit: 10,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
 
   // ==========================
   // Fetch Applicants
   // ==========================
 
-  const fetchApplicants = async () => {
+  const fetchApplicants = useCallback(async (targetPage = page) => {
     try {
       setLoading(true);
 
-      const data = await getApplicants();
+      const response = await getApplicants({ page: targetPage, limit: 10 });
+      const applicantList = Array.isArray(response)
+        ? response
+        : response?.data || [];
 
-      setApplications(data);
+      setApplications(applicantList);
+
+      if (response?.pagination) {
+        setPagination(response.pagination);
+      } else {
+        setPagination({
+          currentPage: 1,
+          totalPages: 1,
+          totalRecords: applicantList.length,
+          limit: 10,
+          hasNextPage: false,
+          hasPrevPage: false,
+        });
+      }
     } catch (error) {
       toast.error(error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [page]);
 
   useEffect(() => {
-    fetchApplicants();
-  }, []);
+    fetchApplicants(page);
+  }, [page, fetchApplicants]);
+
+  const handleSearchChange = (value) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleStatusChange = (value) => {
+    setStatus(value);
+    setPage(1);
+  };
 
   // ==========================
   // Statistics
@@ -52,7 +87,7 @@ export default function ApplicantsPage() {
 
   const stats = useMemo(
     () => ({
-      totalApplicants: applications.length,
+      totalApplicants: pagination.totalRecords || applications.length,
 
       applied: applications.filter((a) => a.status === "Applied").length,
 
@@ -61,7 +96,7 @@ export default function ApplicantsPage() {
 
       selected: applications.filter((a) => a.status === "Selected").length,
     }),
-    [applications],
+    [applications, pagination.totalRecords],
   );
 
   // ==========================
@@ -94,7 +129,7 @@ export default function ApplicantsPage() {
 
       toast.success("Status Updated");
 
-      fetchApplicants();
+      fetchApplicants(page);
     } catch (error) {
       toast.error(error);
     }
@@ -104,7 +139,7 @@ export default function ApplicantsPage() {
   // Loading UI
   // ==========================
 
-  if (loading) {
+  if (loading && applications.length === 0) {
     return (
       <PageContainer>
         <HeroBanner
@@ -135,9 +170,9 @@ export default function ApplicantsPage() {
 
         <ApplicantFilters
           search={search}
-          setSearch={setSearch}
+          setSearch={handleSearchChange}
           status={status}
-          setStatus={setStatus}
+          setStatus={handleStatusChange}
         />
 
         {filteredApplicants.length === 0 ? (
@@ -146,15 +181,50 @@ export default function ApplicantsPage() {
             subtitle="Students who apply to your jobs will appear here."
           />
         ) : (
-          <div className="space-y-6">
-            {filteredApplicants.map((application) => (
-              <ApplicantCard
-                key={application._id}
-                application={application}
-                updateStatus={updateStatus}
-              />
-            ))}
-          </div>
+          <>
+            <div className="space-y-6">
+              {filteredApplicants.map((application) => (
+                <ApplicantCard
+                  key={application._id}
+                  application={application}
+                  updateStatus={updateStatus}
+                />
+              ))}
+            </div>
+
+            {pagination.totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-200 dark:border-white/10">
+                <p className="text-sm text-slate-600 dark:text-gray-400">
+                  Showing page <span className="font-semibold text-slate-900 dark:text-white">{pagination.currentPage}</span> of{" "}
+                  <span className="font-semibold text-slate-900 dark:text-white">{pagination.totalPages}</span> ({pagination.totalRecords} total applicants)
+                </p>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={!pagination.hasPrevPage || loading}
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                  >
+                    Previous
+                  </button>
+
+                  <span className="text-sm font-medium text-slate-600 dark:text-gray-300">
+                    {pagination.currentPage} / {pagination.totalPages}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => p + 1)}
+                    disabled={!pagination.hasNextPage || loading}
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </PageContainer>

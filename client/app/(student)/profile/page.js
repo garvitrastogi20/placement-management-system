@@ -20,7 +20,6 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 
-import Navbar from "@/components/layout/Navbar";
 import ResumeUpload from "@/components/ResumeUpload";
 import GlassCard from "@/components/ui/GlassCard";
 import api from "@/services/api";
@@ -227,17 +226,13 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <>
-        <Navbar />
+      <main className="min-h-screen bg-transparent flex items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto mb-5 h-12 w-12 animate-spin rounded-full border-4 border-[#C97B3C]/20 border-t-[#F4C27A]" />
 
-        <main className="min-h-screen bg-[#090807] text-white flex items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto mb-5 h-12 w-12 animate-spin rounded-full border-4 border-[#C97B3C]/20 border-t-[#F4C27A]" />
-
-            <p className="text-gray-400">Loading your profile...</p>
-          </div>
-        </main>
-      </>
+          <p className="text-gray-400">Loading your profile...</p>
+        </div>
+      </main>
     );
   }
 
@@ -247,11 +242,8 @@ export default function ProfilePage() {
 
   if (!profile) {
     return (
-      <>
-        <Navbar />
-
-        <main className="min-h-screen bg-[#090807] px-6 py-12 text-white">
-          <div className="mx-auto max-w-4xl">
+      <main className="min-h-screen bg-transparent px-6 py-12">
+        <div className="mx-auto max-w-4xl">
             <div className="mb-10">
               <p className="mb-3 text-sm font-semibold uppercase tracking-[0.35em] text-[#C97B3C]">
                 PLACEMENT AI
@@ -430,7 +422,6 @@ export default function ProfilePage() {
             </GlassCard>
           </div>
         </main>
-      </>
     );
   }
 
@@ -439,10 +430,7 @@ export default function ProfilePage() {
   // ======================================================
 
   return (
-    <>
-      <Navbar />
-
-      <main className="min-h-screen bg-[#090807] px-6 py-10 text-white md:px-10">
+      <main className="min-h-screen bg-transparent px-4 sm:px-6 py-8 sm:py-10 text-white md:px-10">
         <div className="mx-auto max-w-7xl">
           {/* ========================================= */}
           {/* HERO */}
@@ -883,7 +871,6 @@ export default function ProfilePage() {
           )}
         </div>
       </main>
-    </>
   );
 }
 

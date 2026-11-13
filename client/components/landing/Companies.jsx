@@ -18,9 +18,9 @@ const companies = [
 
 export default function Companies() {
     return (
-        <section className="bg-black py-24 overflow-hidden">
+        <section id="companies" className="bg-transparent py-20 sm:py-24 overflow-hidden">
 
-            <div className="max-w-7xl mx-auto px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-8">
 
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -29,30 +29,30 @@ export default function Companies() {
                     transition={{ duration: 0.8 }}
                 >
 
-                    <h2 className="text-5xl font-bold text-center mb-5">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-5 text-slate-900 dark:text-white">
                         Trusted by Leading Companies
                     </h2>
 
-                    <p className="text-center text-gray-400 text-lg mb-16">
+                    <p className="text-center text-slate-600 dark:text-slate-400 text-base sm:text-lg mb-12 sm:mb-16 max-w-2xl mx-auto">
                         Connecting talented students with world-class recruiters.
                     </p>
 
                 </motion.div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
 
                     {companies.map((company) => (
 
                         <motion.div
                             key={company.name}
                             whileHover={{
-                                scale: 1.08,
-                                y: -6,
+                                scale: 1.05,
+                                y: -4,
                             }}
                             transition={{
                                 duration: 0.25,
                             }}
-                            className="bg-gray-900 border border-gray-800 rounded-2xl p-8 flex items-center justify-center h-36 hover:border-blue-500 transition"
+                            className="bg-white/90 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 rounded-2xl p-6 sm:p-8 flex items-center justify-center h-28 sm:h-36 shadow-sm hover:border-[#C97B3C]/50 transition"
                         >
 
                             <Image
@@ -60,7 +60,7 @@ export default function Companies() {
                                 alt={company.name}
                                 width={140}
                                 height={60}
-                                className="object-contain grayscale hover:grayscale-0 transition duration-300"
+                                className="object-contain grayscale hover:grayscale-0 transition duration-300 dark:brightness-125"
                             />
 
                         </motion.div>

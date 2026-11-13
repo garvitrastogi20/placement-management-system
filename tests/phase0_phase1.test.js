@@ -17,6 +17,8 @@ const {
   parseOptionalNumber,
   sanitizeStringArray,
   escapeRegex,
+  parsePagination,
+  formatPaginationResponse,
 } = require("../utils/validation");
 
 const {
@@ -764,4 +766,123 @@ test("HTTP integration: recruiter profile image upload, job deadline validation,
   const applicantsJson = await applicantsRes.json();
   assert.equal(applicantsJson.length, 1);
   assert.equal(applicantsJson[0].student, null);
+});
+
+test("Phase B & C: health check, pagination helpers, and paginated jobs contract", async (t) => {
+  const { server, baseUrl } = await startTestServer();
+  t.after(() => server.close());
+
+  // 1. Health check verification
+  const healthRes = await fetch(`${baseUrl}/health`);
+  assert.equal(healthRes.status, 200);
+  const healthJson = await healthRes.json();
+  assert.equal(healthJson.status, "ok");
+  assert.ok(typeof healthJson.uptime === "number");
+  assert.ok(healthJson.timestamp);
+
+  // 2. Pagination validation helpers
+  // Default values
+  const defaultPage = parsePagination({});
+  assert.equal(defaultPage.page, 1);
+  assert.equal(defaultPage.limit, 10);
+  assert.equal(defaultPage.skip, 0);
+
+  // Custom valid numbers as strings
+  const customPage = parsePagination({ page: "3", limit: "15" });
+  assert.equal(customPage.page, 3);
+  assert.equal(customPage.limit, 15);
+  assert.equal(customPage.skip, 30);
+
+  // Invalid / negative bounds fallback to defaults
+  const negativePage = parsePagination({ page: "-5", limit: "-20" });
+  assert.equal(negativePage.page, 1);
+  assert.equal(negativePage.limit, 10);
+  assert.equal(negativePage.skip, 0);
+
+  // Limit exceeding maxLimit clamp
+  const excessPage = parsePagination({ page: "2", limit: "500" }, 10, 50);
+  assert.equal(excessPage.page, 2);
+  assert.equal(excessPage.limit, 50);
+  assert.equal(excessPage.skip, 50);
+
+  // formatPaginationResponse structure
+  const formatted = formatPaginationResponse({
+    data: [{ id: 1 }, { id: 2 }],
+    totalRecords: 25,
+    page: 2,
+    limit: 10,
+  });
+  assert.equal(formatted.success, true);
+  assert.equal(formatted.data.length, 2);
+  assert.deepEqual(formatted.pagination, {
+    currentPage: 2,
+    totalPages: 3,
+    totalRecords: 25,
+    limit: 10,
+    hasNextPage: true,
+    hasPrevPage: true,
+  });
+
+  // 3. GET /api/jobs endpoint pagination contract
+  const studentId = "507f1f77bcf86cd799439011";
+  const studentToken = makeToken({ id: studentId, role: "student" });
+
+  const origUserFindById = User.findById;
+  const origJobCount = Job.countDocuments;
+  const origJobFind = Job.find;
+  const origAppFind = Application.find;
+
+  t.after(() => {
+    User.findById = origUserFindById;
+    Job.countDocuments = origJobCount;
+    Job.find = origJobFind;
+    Application.find = origAppFind;
+  });
+
+  User.findById = () => ({
+    select: async () => ({ _id: studentId, role: "student", name: "Student" }),
+  });
+  Job.countDocuments = async () => 1;
+  Job.find = () => ({
+    populate: () => ({
+      sort: () => ({
+        skip: () => ({
+          limit: async () => [
+            {
+              _id: "507f1f77bcf86cd799439055",
+              title: "Frontend Engineer",
+              company: "Tech Corp",
+              location: "Bangalore",
+              toObject: () => ({
+                _id: "507f1f77bcf86cd799439055",
+                title: "Frontend Engineer",
+                company: "Tech Corp",
+                location: "Bangalore",
+              }),
+            },
+          ],
+        }),
+      }),
+    }),
+  });
+  Application.find = () => ({
+    select: async () => [],
+  });
+
+  const jobsRes = await fetch(`${baseUrl}/api/jobs?page=1&limit=5`, {
+    headers: { Authorization: `Bearer ${studentToken}` },
+  });
+  assert.equal(jobsRes.status, 200);
+  const jobsJson = await jobsRes.json();
+  assert.equal(jobsJson.success, true);
+  assert.ok(Array.isArray(jobsJson.data));
+  assert.equal(jobsJson.data.length, 1);
+  assert.deepEqual(jobsJson.pagination, {
+    currentPage: 1,
+    totalPages: 1,
+    totalRecords: 1,
+    limit: 5,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
 });

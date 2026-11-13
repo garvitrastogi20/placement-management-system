@@ -27,17 +27,17 @@ export default function ApplicantCard({ application, updateStatus }) {
           <ApplicantAvatar name={studentName} />
 
           <div>
-            <h2 className="text-2xl font-bold text-white">{studentName}</h2>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{studentName}</h2>
 
             <div className="mt-3 space-y-2">
-              <div className="flex items-center gap-3 text-gray-400">
-                <FaEnvelope className="text-[#C97B3C]" />
+              <div className="flex items-center gap-3 text-slate-500 dark:text-gray-400">
+                <FaEnvelope className="text-blue-600 dark:text-[#C97B3C]" />
 
                 {studentEmail}
               </div>
 
-              <div className="flex items-center gap-3 text-gray-400">
-                <FaCalendarAlt className="text-[#C97B3C]" />
+              <div className="flex items-center gap-3 text-slate-500 dark:text-gray-400">
+                <FaCalendarAlt className="text-blue-600 dark:text-[#C97B3C]" />
                 Applied on {appliedDate}
               </div>
             </div>
@@ -64,13 +64,17 @@ export default function ApplicantCard({ application, updateStatus }) {
               gap-2
               rounded-xl
               border
-              border-[#C97B3C]/30
-              bg-[#C97B3C]/10
+              border-blue-200
+              bg-blue-50
               px-4
               py-2
-              text-[#F4C27A]
+              text-blue-700
               transition
-              hover:bg-[#C97B3C]/20
+              hover:bg-blue-100
+              dark:border-[#C97B3C]/30
+              dark:bg-[#C97B3C]/10
+              dark:text-[#F4C27A]
+              dark:hover:bg-[#C97B3C]/20
             "
           >
             <FaFileAlt />
@@ -81,18 +85,18 @@ export default function ApplicantCard({ application, updateStatus }) {
 
       {/* Divider */}
 
-      <div className="my-6 h-px bg-white/10" />
+      <div className="my-6 h-px bg-slate-200 dark:bg-white/10" />
 
       {/* Skills */}
 
       <div className="mb-6">
-        <p className="mb-3 text-sm uppercase tracking-wider text-gray-400">
+        <p className="mb-3 text-sm uppercase tracking-wider text-slate-500 dark:text-gray-400">
           Skills
         </p>
 
         <div className="flex flex-wrap gap-3">
           {studentSkills.length === 0 ? (
-            <span className="text-gray-500">No skills available</span>
+            <span className="text-slate-400 dark:text-gray-500">No skills available</span>
           ) : (
             studentSkills.map((skill) => (
               <span
@@ -100,12 +104,15 @@ export default function ApplicantCard({ application, updateStatus }) {
                 className="
                   rounded-full
                   border
-                  border-[#C97B3C]/20
-                  bg-[#C97B3C]/10
+                  border-blue-200
+                  bg-blue-50
                   px-4
                   py-2
                   text-sm
-                  text-[#F4C27A]
+                  text-blue-700
+                  dark:border-[#C97B3C]/20
+                  dark:bg-[#C97B3C]/10
+                  dark:text-[#F4C27A]
                 "
               >
                 {skill}

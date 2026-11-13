@@ -377,16 +377,18 @@ export default function ResumeAnalyzerPage() {
   const safeScore = Math.max(0, Math.min(100, score));
 
   return (
-    <main className="min-h-screen bg-[#0b0b0d] px-4 py-8 text-white sm:px-8">
+    <div className="w-full px-4 py-6 sm:px-8 text-slate-900 dark:text-white transition-colors duration-200">
       <div className="mx-auto max-w-6xl">
         <header className="mb-8">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-[0.25em] text-orange-400">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-blue-600 dark:text-orange-400">
             PlaceMentor AI
           </p>
 
-          <h1 className="text-3xl font-bold sm:text-4xl">AI Resume Analyzer</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+            AI Resume Analyzer
+          </h1>
 
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-400 sm:text-base">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-gray-400 sm:text-base">
             Compare your uploaded PDF resume with a job description, identify
             skill gaps, and get actionable recommendations.
           </p>
@@ -645,6 +647,6 @@ export default function ResumeAnalyzerPage() {
           )}
         </section>
       </div>
-    </main>
+    </div>
   );
 }

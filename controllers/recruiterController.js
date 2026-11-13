@@ -4,6 +4,8 @@ const {
   isValidObjectId,
   parseOptionalNumber,
   sanitizeStringArray,
+  parsePagination,
+  formatPaginationResponse,
 } = require("../utils/validation");
 
 /**
@@ -229,6 +231,8 @@ const getApplicants = async (req, res) => {
  */
 const getAllApplicants = async (req, res) => {
   try {
+    const { page, limit, skip } = parsePagination(req.query, 10, 50);
+
     // Get all jobs posted by this recruiter
     const recruiterJobs = await Job.find({
       recruiter: req.user.id,
@@ -236,19 +240,33 @@ const getAllApplicants = async (req, res) => {
 
     const jobIds = recruiterJobs.map((job) => job._id);
 
-    // Fetch all applications for those jobs
-    const applicants = await Application.find({
+    const filter = {
       job: {
         $in: jobIds,
       },
-    })
-      .populate("student", "name email role")
-      .populate("job", "title company")
-      .sort({
-        createdAt: -1,
-      });
+    };
 
-    res.status(200).json(applicants);
+    const [totalRecords, applicants] = await Promise.all([
+      Application.countDocuments(filter),
+      Application.find(filter)
+        .populate("student", "name email role")
+        .populate("job", "title company")
+        .sort({
+          createdAt: -1,
+          _id: -1,
+        })
+        .skip(skip)
+        .limit(limit),
+    ]);
+
+    return res.status(200).json(
+      formatPaginationResponse({
+        data: applicants,
+        totalRecords,
+        page,
+        limit,
+      }),
+    );
   } catch (error) {
     console.error("Get All Applicants Error:", error);
     res.status(500).json({

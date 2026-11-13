@@ -27,7 +27,7 @@ const generateJSON = async ({
   const groq = getGroqClient();
 
   const response = await groq.chat.completions.create({
-    model: process.env.GROQ_MODEL || "openai/gpt-oss-20b",
+    model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
     messages: [
       {
         role: "system",

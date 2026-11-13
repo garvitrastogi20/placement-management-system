@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import PageContainer from "@/components/layout/PageContainer";
-import Navbar from "@/components/layout/Navbar";
 import api from "@/services/api";
 
 export default function MockInterviewPage() {
@@ -179,22 +178,22 @@ export default function MockInterviewPage() {
   const totalQuestions = interview?.totalQuestions || 8;
 
   return (
-    <>
-      <Navbar />
+    <PageContainer>
+      <div className="mx-auto max-w-4xl py-2">
+        {/* Page Header */}
+        <div className="mb-8">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-blue-600 dark:text-[#C97B3C]">
+            AI INTERVIEW SIMULATOR
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+            AI Mock Interview
+          </h1>
 
-      <PageContainer>
-        <div className="mx-auto max-w-4xl px-4 py-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              AI Mock Interview
-            </h1>
-
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
-              Practice job-specific interview questions generated from your
-              resume and receive AI-powered feedback.
-            </p>
-          </div>
+          <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">
+            Practice job-specific interview questions generated from your
+            resume and receive AI-powered feedback.
+          </p>
+        </div>
 
           {/* Job Selection */}
           {!interview && (
@@ -477,6 +476,5 @@ export default function MockInterviewPage() {
           )}
         </div>
       </PageContainer>
-    </>
   );
 }
